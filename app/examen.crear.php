@@ -9,6 +9,6 @@ include_once '../modelo/BDConexion.Class.php';
  $ca=$_POST['llamado1'];
  $dep=$_POST['llamado2'];
  $h=$_POST['hora'];
- $profesoragregar="INSERT INTO bdUsuarios.MESA_EXAMEN (tipo,idTribunal,codAsignatura) VALUES ('6','$n','$a','$e','$ca' )";
+ $profesoragregar="INSERT INTO TRIBUNAL (presidente,vocal,vocal1,suplente) VALUES (NULL,'$d','$e','$c','$d')";
  echo $profesores=BDConexion::getInstancia()->query($profesoragregar);
 ?>

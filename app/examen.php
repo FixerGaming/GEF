@@ -18,7 +18,7 @@ $ColeccionDocentes = new ColeccionDocentes();
   <script type="text/javascript" src="../lib/JQuery/jquery-3.3.1.js"></script>
   <script type="text/javascript" src="../lib/bootstrap-4.1.1-dist/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="../lib/login.js"></script>
-  <script type="text/javascript" src="../lib/funcionCarrera.js"></script>
+  <script type="text/javascript" src="../lib/funcionMesa.js"></script>
   <script type="text/javascript" src="../lib/alertifyjs/alertify.js"></script>
   <body>
   <?php include_once '../gui/navbar.php'; ?>
@@ -46,33 +46,33 @@ $ColeccionDocentes = new ColeccionDocentes();
           <input type="text" name"" id='NuevaAsignatura' class="form-control input-sm">
           <label>Presidente</label>
           <select class="form-control form-control-sm" id="PresidenteNuevo">	
-             <?php foreach ($ColeccionDocentes->getDocentes() as $Docente) {
-              ?>
-                  <option><?= $Docente->getNombre(); ?></option>
-              <?php } ?>
+            <?php foreach ($ColeccionDocentes->getDocentes() as $Docente) {
+               echo '<option value="'.$Docente->getId().'">'.$Docente->getNombre().'</option>';
+             }  
+            ?>
           </select>
           <label>Vocal 1</label>
           <select class="form-control form-control-sm" id="VocalNuevo">	
-             <?php foreach ($ColeccionDocentes->getDocentes() as $Docente) {
-              ?>
-                  <option><?= $Docente->getNombre(); ?></option>
-              <?php } ?>
+            <?php foreach ($ColeccionDocentes->getDocentes() as $Docente) {
+               echo '<option value="'.$Docente->getId().'">'.$Docente->getNombre().'</option>';
+             }  
+            ?>
           </select>         
           <label>Vocal 2</label>
           <select class="form-control form-control-sm" id="VocalNuevo1">	
             <option><?=" "?></option>
-             <?php foreach ($ColeccionDocentes->getDocentes() as $Docente) {
-              ?>
-                  <option><?= $Docente->getNombre(); ?></option>
-              <?php } ?>
+            <?php foreach ($ColeccionDocentes->getDocentes() as $Docente) {
+               echo '<option value="'.$Docente->getId().'">'.$Docente->getNombre().'</option>';
+             }  
+            ?>
           </select>
           <label>Suplente</label>
           <select class="form-control form-control-sm" id="SuplenteNuevo">	
            <option><?=" "?></option>
              <?php foreach ($ColeccionDocentes->getDocentes() as $Docente) {
-              ?>
-                  <option><?= $Docente->getNombre(); ?></option>
-              <?php } ?>
+               echo '<option value="'.$Docente->getId().'">'.$Docente->getNombre().'</option>';
+             }  
+            ?>
           </select>
           <label>1 Llamado</label>
           <input type="text" name"" id='1llamadoNuevo' class="form-control input-sm">

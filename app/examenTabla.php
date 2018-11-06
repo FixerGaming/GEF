@@ -61,7 +61,9 @@
                 $ver[3]."||".
                 $ver[4]."||".
                 $ver[5]."||".
-                $ver[6]."||";
+                $ver[8]."||".
+                $ver[9]."||";
+            
          ?>
       <tr>
         <td><?php echo $ver [0] ?></td>
@@ -70,7 +72,9 @@
         <td><?php echo $ver [3] ?></td>
         <td><?php echo $ver [4] ?></td>
         <td><?php echo $ver [5] ?></td>
-        <td><?php echo $ver [6] ?></td>
+        <td><?php echo $ver [8] ?></td>
+        <td><?php echo $ver [9] ?></td>
+
         
 
 
