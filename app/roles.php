@@ -1,8 +1,8 @@
 <?php
 include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_ROLES);
-include_once '../modelo/ColeccionRoles.php';
-$ColeccionRoles = new ColeccionRoles();
+include_once '../modelo/ColeccionLlamado.php';
+$ColeccionRoles = new ColeccionLlamado();
 ?>
 
 <html>
@@ -36,7 +36,7 @@ $ColeccionRoles = new ColeccionRoles();
                         <th>Opciones</th>
                     </tr>
 
-                    <?php foreach ($ColeccionRoles->getRoles() as $Rol) {
+                    <?php foreach ($ColeccionRoles->getLlamado() as $Rol) {
                         ?>
                         <tr>
                             <td><?= $Rol->getNombre(); ?></td>
