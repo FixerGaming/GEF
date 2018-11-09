@@ -1,12 +1,6 @@
 <?php include_once '../modelo/BDConexion.Class.php';?>
-<form method="post">
-  <div class="card">
-      <div class="card-header">
-          <h2>Gestionar Mesa de Examen</h2>
-      </div>
-    <br>
-    <br>
-</form>
+
+
 <div class="">
   <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalagrega">
       <span class="oi oi-plus"> Agregar Examen</span>

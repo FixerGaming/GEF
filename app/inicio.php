@@ -17,93 +17,38 @@ $ColeccionUsuarios = new ColeccionUsuarios();
     <body>
 
         <?php include_once '../gui/navbar.php'; ?>
-    <div class="row justify-content-between"> 
-        <div class="container col-7">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Inicio</h3>
-                </div>
-                <div class="card-body">
-                    <p>
-                        <a href="usuario.crear.php">
-                        <button type="button" class="btn btn-success">
-                            <span class="oi oi-plus"></span> Nuevo Usuario
-                        </button>
-                    </a>
-                    </p>
-                    <table class="table table-hover table-sm">
-                        <tr class="table-info">
-                            <th>Usuario</th>
-                            <th>Opciones</th>
-                        </tr>
-                        <tr>
-                            <?php foreach ($ColeccionUsuarios->getUsuarios() as $Usuario) {
-                                ?>
-                                <td><?= $Usuario->getNombre(); ?><br /><?= $Usuario->getEmail(); ?></td>
-                                <td>
-                                    <a title="Ver detalle" href="usuario.ver.php?id=<?= $Usuario->getId(); ?>">
-                                        <button type="button" class="btn btn-outline-info">
-                                            <span class="oi oi-zoom-in"></span>
-                                        </button></a>
-                                    <a title="Modificar" href="usuario.modificar.php?id=<?= $Usuario->getId(); ?>">
-                                        <button type="button" class="btn btn-outline-warning">
-                                            <span class="oi oi-pencil"></span>
-                                        </button></a>
-                                    <a title="Eliminar" href="usuario.eliminar.php?id=<?= $Usuario->getId(); ?>">
-                                        <button type="button" class="btn btn-outline-danger">
-                                            <span class="oi oi-trash"></span>
-                                        </button></a>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    </table>
+
+<div class="container-fluid">
+<form method="post" action="reporte.php" align="center">  
+                     <input type="submit" name="reporte" value="CSV Export" class="btn btn-success" />  
+                </form>  
+    <div class="container">
+        <div class="row justify-content-around">
+          <div class=" col-lg-3">
+                <div class="card">
+                    <div class="card-header alert-info">
+                        B&uacute;squeda Avanzada
+                    </div>
+                    <div class="card-body">
+
+                    </div>
                 </div>
             </div>
+            <div class="   col-lg-9">
+                <div class="card">
+                   <div class="card-header alert-success">
+                   <span class="card-title">Listado de Examenes</span>
+                    </div>
+                    <div class="card-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
         </div>
         
-        <div class="container col-4">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Inicio</h3>
-                </div>
-                <div class="card-body">
-                    <p>
-                        <a href="usuario.crear.php">
-                        <button type="button" class="btn btn-success">
-                            <span class="oi oi-plus"></span> Nuevo Usuario
-                        </button>
-                    </a>
-                    </p>
-                    <table class="table table-hover table-sm">
-                        <tr class="table-info">
-                            <th>Usuario</th>
-                            <th>Opciones</th>
-                        </tr>
-                        <tr>
-                            <?php foreach ($ColeccionUsuarios->getUsuarios() as $Usuario) {
-                                ?>
-                                <td><?= $Usuario->getNombre(); ?><br /><?= $Usuario->getEmail(); ?></td>
-                                <td>
-                                    <a title="Ver detalle" href="usuario.ver.php?id=<?= $Usuario->getId(); ?>">
-                                        <button type="button" class="btn btn-outline-info">
-                                            <span class="oi oi-zoom-in"></span>
-                                        </button></a>
-                                    <a title="Modificar" href="usuario.modificar.php?id=<?= $Usuario->getId(); ?>">
-                                        <button type="button" class="btn btn-outline-warning">
-                                            <span class="oi oi-pencil"></span>
-                                        </button></a>
-                                    <a title="Eliminar" href="usuario.eliminar.php?id=<?= $Usuario->getId(); ?>">
-                                        <button type="button" class="btn btn-outline-danger">
-                                            <span class="oi oi-trash"></span>
-                                        </button></a>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
         <?php include_once '../gui/footer.php'; ?>
     </body>
 </html>

@@ -26,7 +26,10 @@ $ColeccionDocentes = new ColeccionDocentes();
   <div id="tabla"></div>
   <div class="tabla"></div>
   </div>
-
+ 
+    <br>
+    <br>
+</form>
   <!-- Modal Agregar Examen -->
   <div class="modal fade" id="modalagrega" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
@@ -143,6 +146,7 @@ $ColeccionDocentes = new ColeccionDocentes();
  $(document).ready(function(){
    $('#guardarnuevo').click(function(){
      carrera=$('#CarreraNueva').val();
+     
      presidente=$('#PresidenteNuevo').val();
      vocal=$('#VocalNuevo').val();
      vocal1=$('#VocalNuevo1').val();
