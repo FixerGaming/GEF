@@ -33,7 +33,7 @@ $ColeccionCarrera = new ColeccionCarrera()
                             </div>
                             <div class="form-row">
                                  <label for="selectTipoBusqueda">Por Carrera</label>
-                                 <select class="form-control" id="selectTipoBusqueda" name="selectTipoBusqueda">
+                                 <select class="form-control" name="selectCarrera">
                                  <?php foreach ($ColeccionCarrera->getCarrera() as $Carrera) {
                                     echo '<option value="'.$Carrera->getId().'">'.$Carrera->getNombre().'</option>';
                                 }  
@@ -60,19 +60,19 @@ $ColeccionCarrera = new ColeccionCarrera()
                             </div>
                         </div>                                  
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="general">
+                            <input class="form-check-input" type="checkbox" value="" id="general" name="General">
                             <label class="form-check-label" for="defaultCheck1">
                                 General
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="todoTiempo">
+                            <input class="form-check-input" type="checkbox" value="" id="todoTiempo" name="TodoTiempo">
                             <label class="form-check-label" for="defaultCheck1">
                                 Todo Tiempo
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="extraordinaria">
+                            <input class="form-check-input" type="checkbox" value="" id="extraordinaria" name="Extraordinaria">
                             <label class="form-check-label" for="defaultCheck1">
                                 Extraordinaria
                             </label>
@@ -86,7 +86,28 @@ $ColeccionCarrera = new ColeccionCarrera()
                 </div>
             </div>
             <div class="col-md-9 ml-md-auto">
-            <?php if(isset($_POST['Buscar'])){ ?>
+            <?php 
+            if(isset($_POST['Buscar'])){ 
+                $where="";
+               $Carrera=$_POST['selectCarrera'];
+                if(empty('selectCarrera')){
+                    $where ="WHERE C.id='".$Carrera."%'";
+                }
+               $reporte="SELECT C.id, C.nombre AS Carrera, A.nombre AS Asignatura, P.nombre AS presidente,P1.nombre AS vocal,P2.nombre, P3.nombre AS vocal1, F.fecha1, F.fecha2, LM.hora
+                FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
+                INNER JOIN PROFESOR P ON T.presidente = P.id
+                LEFT JOIN PROFESOR P1 ON  T.vocal = P1.id
+                LEFT JOIN PROFESOR P2 ON  T.vocal1 = P2.id
+                LEFT JOIN PROFESOR P3 ON T.suplente=P3.id
+                INNER JOIN ASIGNATURA A ON A.id= M.codAsignatura
+                INNER JOIN MESA_EXAMEN_CARRERA MC ON MC.codMesa=M.id
+                INNER JOIN CARRERA C ON MC.codCarrera=C.id
+                INNER JOIN  LLAMADO_MESA_EXAMEN LM ON LM.idMesa= M.id
+                INNER JOIN LLAMADO L ON L.id = LM.idLlamado
+                INNER JOIN FECHA F ON F.LLAMADO_id= L.id
+                $where";
+                $reporteCsv= BDConexion::getInstancia()->query($reporte);
+            ?>    
                 <div class="card">
                    <div class="card-header alert-success">
                    <span class="card-title">Listado de Examenes</span>
@@ -107,10 +128,27 @@ $ColeccionCarrera = new ColeccionCarrera()
                                 <td>2Llamado</td>
                                 <td>Hora</td>
                             </tr>
-                        </table>
                     </div>                   
                 </div> 
-                
+                    <?php 
+                        while($row = $reporteCsv->fetch_assoc())  
+                        { 
+                            echo
+                            '<tr>
+                            <td>'.$row['id'].'</td>
+                            <td>'.$row['Carrera'].'</td>
+                            <td>'.$row['Asignatura'].'</td>
+                            <td>'.$row['presidente'].'</td>
+                            <td>'.$row['vocal'].'</td>
+                            <td>'.$row['vocal1'].'</td>
+                            <td>'.$row['suplente'].'</td>
+                            <td>'.$row['fecha1'].'</td>
+                            <td>'.$row['fecha2'].'</td>
+                            <td>'.$row['hora'].'</td>
+                            </tr>';  
+                        }  
+                    ?>
+                    </table>
                 <div class="card-footer">
                     <ul class="pagination justify-content-center">
                     <li class = "page-item active"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=1&accion=busquedaAvanzada"> 1</a></li><li class = "page-item "><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> 2</a></li><li class = "page-item"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> &gt;</a></li>        </ul> 
