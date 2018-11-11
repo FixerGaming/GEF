@@ -2,7 +2,9 @@
 include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_ROLES);
 include_once '../modelo/ColeccionLlamado.php';
-$ColeccionRoles = new ColeccionLlamado();
+include_once '../modelo/gestorMesaExamen.Class.php';
+$ColeccionLlamado = new ColeccionLlamado();
+$gestor =new gestorMesaExamen();
 ?>
 
 <html>
@@ -36,27 +38,10 @@ $ColeccionRoles = new ColeccionLlamado();
                         <th>Opciones</th>
                     </tr>
 
-                    <?php foreach ($ColeccionRoles->getLlamado() as $Rol) {
+                    <?php foreach ($ColeccionLlamado->getLlamado() as $Rol) {
                         ?>
                         <tr>
-                            <td><?= $Rol->getNombre(); ?></td>
-                            <td>
-                                <a title="Ver detalle" href="rol.ver.php?id=<?= $Rol->getId(); ?>">
-                                    <button type="button" class="btn btn-outline-info">
-                                        <span class="oi oi-zoom-in"></span>
-                                    </button>
-                                </a>
-                                <a title="Modificar" href="rol.modificar.php?id=<?= $Rol->getId(); ?>">
-                                    <button type="button" class="btn btn-outline-warning">
-                                        <span class="oi oi-pencil"></span>
-                                    </button>
-                                </a>
-                                <a title="Eliminar" href="rol.eliminar.php?id=<?= $Rol->getId(); ?>">
-                                    <button type="button" class="btn btn-outline-danger">
-                                        <span class="oi oi-trash"></span>
-                                    </button>
-                                </a>
-                            </td>
+                            <td><?= $Rol->getNombre(); ?></td>    
                         </tr>
                     <?php } ?>
                 </table>

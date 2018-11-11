@@ -14,7 +14,7 @@ class Llamado extends BDObjetoGenerico {
 
     function __construct($id = null) {
         parent::__construct($id, "LLAMADO");
-        $this->setMesa("LLAMADO_MESA_EXAMEN", "MESA_EXAMEN", "idLlamado", "idMesa", "MESA_EXAMEN");
+        $this->setExamen("LLAMADO_MESA_EXAMEN","MESA_EXAMEN", "idLlamado", "idMesa", "Examen");
     }
 
     function getId() {
@@ -45,7 +45,7 @@ class Llamado extends BDObjetoGenerico {
      * @param type $claseElementoColeccion
      * 
      */
-    function setMesa($tablaVinculacion, $tablaElementos, $idObjetoContenedor, $atributoFKElementoColeccion, $claseElementoColeccion) {
+    function setExamen($tablaVinculacion, $tablaElementos, $idObjetoContenedor, $atributoFKElementoColeccion, $claseElementoColeccion) {
         $this->setColeccionElementos($tablaVinculacion, $tablaElementos, $idObjetoContenedor, $atributoFKElementoColeccion, $claseElementoColeccion);
         $this->examen = $this->getColeccionElementos();
     }
