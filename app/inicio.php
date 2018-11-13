@@ -1,8 +1,10 @@
 <?php
 include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
-include_once '../modelo/ColeccionCarrera.php';
-$ColeccionCarrera = new ColeccionCarrera()
+include_once '../modelo/ColeccionLlamado.php';
+include_once '../modelo/BDConexion.Class.php';
+
+$ColeccionLlamado = new ColeccionLlamado();
 ?>
 
 <html>
@@ -11,168 +13,110 @@ $ColeccionCarrera = new ColeccionCarrera()
         <link rel="stylesheet" href="../lib/bootstrap-4.1.1-dist/css/bootstrap.css" />
         <link rel="stylesheet" href="../lib/open-iconic-master/font/css/open-iconic-bootstrap.css" />
         <script type="text/javascript" src="../lib/JQuery/jquery-3.3.1.js"></script>
-        <script type="text/javascript" src="../lib/bootstrap-4.1.1-dist/js/bootstrap.min.js"></script>        
+        <script type="text/javascript" src="../lib/bootstrap-4.1.1-dist/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/js/gijgo.min.js" type="text/javascript"></script>
+        <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="../lib/calendar/style.css">
+
+         
         <title><?= Constantes::NOMBRE_SISTEMA; ?> - Inicio</title>
     </head>
     <body>
 
         <?php include_once '../gui/navbar.php'; ?>
-<div class="container-fluid"> 
+<div class="container-fluid "> 
     <div class="container">
-        <div class="row justify-content-around">
+    <div class="row justify-content-around">
           <div class=" col-sm-3">
                 <div class="card">
                     <div class="card-header alert-info">
-                        B&uacute;squeda Avanzada
-                    </div>  
-                    <div class="card-body">
-                    <form action="?accion=busquedaAvanzada" method="post">
-                        <div class="form-group">
-                            <div class="form-row">
-                                <small>Ingrese las opciones de B&uacute;squeda a continuaci&oacute;n.</small>                    
-                            </div>
-                            <div class="form-row">
-                                 <label for="selectTipoBusqueda">Por Carrera</label>
-                                 <select class="form-control" name="selectCarrera">
-                                 <?php foreach ($ColeccionCarrera->getCarrera() as $Carrera) {
-                                    echo '<option value="'.$Carrera->getId().'">'.$Carrera->getNombre().'</option>';
-                                }  
-                                ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <label for="inputExpediente">Por Asignatura</label> 
-                            </div>
-                            <div class="form-row">
-                                <input type="text" class="form-control" id="inputAsignatura" name="inputAsignatura" value="">
-                                <small id="inputAsignaturas" class="form-text text-muted"></small>                   
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <label for="inputDesdeIL">Por Docente</label>                                    
-                            </div>
-                            <div class="form-row">
-                                <input type="text" class="form-control " id="inputDocente" name="inputDocente" value="">
-                                <small id="inputDocentes" class="form-text text-muted"></small>                   
-                            </div>
-                        </div>                                  
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="general" name="General">
-                            <label class="form-check-label" for="defaultCheck1">
-                                General
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="todoTiempo" name="TodoTiempo">
-                            <label class="form-check-label" for="defaultCheck1">
-                                Todo Tiempo
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="extraordinaria" name="Extraordinaria">
-                            <label class="form-check-label" for="defaultCheck1">
-                                Extraordinaria
-                            </label>
-                        </div>
-                        <br>
-                        <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block btn-lg" name="Buscar">Realizar b&uacute;squeda</button>
-                        </div>
-                    </form>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-9 ml-md-auto">
-            <?php 
-            if(isset($_POST['Buscar'])){ 
-                $where="";
-               $Carrera=$_POST['selectCarrera'];
-                if(empty('selectCarrera')){
-                    $where ="WHERE C.id='".$Carrera."%'";
-                }
-               $reporte="SELECT C.id, C.nombre AS Carrera, A.nombre AS Asignatura, P.nombre AS presidente,P1.nombre AS vocal,P2.nombre, P3.nombre AS vocal1, F.fecha1, F.fecha2, LM.hora
-                FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
-                INNER JOIN PROFESOR P ON T.presidente = P.id
-                LEFT JOIN PROFESOR P1 ON  T.vocal = P1.id
-                LEFT JOIN PROFESOR P2 ON  T.vocal1 = P2.id
-                LEFT JOIN PROFESOR P3 ON T.suplente=P3.id
-                INNER JOIN ASIGNATURA A ON A.id= M.codAsignatura
-                INNER JOIN MESA_EXAMEN_CARRERA MC ON MC.codMesa=M.id
-                INNER JOIN CARRERA C ON MC.codCarrera=C.id
-                INNER JOIN  LLAMADO_MESA_EXAMEN LM ON LM.idMesa= M.id
-                INNER JOIN LLAMADO L ON L.id = LM.idLlamado
-                INNER JOIN FECHA F ON F.LLAMADO_id= L.id
-                $where";
-                $reporteCsv= BDConexion::getInstancia()->query($reporte);
-            ?>    
-                <div class="card">
-                   <div class="card-header alert-success">
-                   <span class="card-title">Listado de Examenes</span>
-                    </div>
-                    <div class="card-body">
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-striped table-responsive-md">
-                            <tr scope="row">
-                                <td>Cod</td>
-                                <td>Carrera</td>
-                                <td>Asignatura</td>
-                                <td>Presidente</td>
-                                <td>Vocal1</td>
-                                <td>Vocal2</td>
-                                <td>Suplente</td>
-                                <td>1Llamado</td>
-                                <td>2Llamado</td>
-                                <td>Hora</td>
-                            </tr>
-                    </div>                   
-                </div> 
-                    <?php 
-                        while($row = $reporteCsv->fetch_assoc())  
-                        { 
-                            echo
-                            '<tr>
-                            <td>'.$row['id'].'</td>
-                            <td>'.$row['Carrera'].'</td>
-                            <td>'.$row['Asignatura'].'</td>
-                            <td>'.$row['presidente'].'</td>
-                            <td>'.$row['vocal'].'</td>
-                            <td>'.$row['vocal1'].'</td>
-                            <td>'.$row['suplente'].'</td>
-                            <td>'.$row['fecha1'].'</td>
-                            <td>'.$row['fecha2'].'</td>
-                            <td>'.$row['hora'].'</td>
-                            </tr>';  
-                        }  
+                    <?php @$NombreMesa = $_POST['NombreMesa'];
+                        $Consulta="SELECT L.tipo AS tipo, L.id AS id, L.nombre AS nombre FROM LLAMADO L WHERE L.id LIKE '%".$NombreMesa."%'";
+                        $Consultas=BDConexion::getInstancia()->query($Consulta);
+                        $row = $Consultas->fetch_assoc();
+                        $tipo=$row['tipo'];
+                        $id=$row['id'];
+                        $nombre=$row['nombre'];
                     ?>
-                    </table>
-                <div class="card-footer">
-                    <ul class="pagination justify-content-center">
-                    <li class = "page-item active"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=1&accion=busquedaAvanzada"> 1</a></li><li class = "page-item "><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> 2</a></li><li class = "page-item"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> &gt;</a></li>        </ul> 
-                    <span class="pagination justify-content-center">
-                        Mostrando 1-10 de 6384        
-                    </span>
+                        <form action="inicio.php" method="POST" name="formulario">
+                            <select class="form-control" name="NombreMesa" >
+                                <?php foreach ($ColeccionLlamado->getLlamado() as $Llamado) {?>
+                                    <option value="<?php echo $Llamado->getId();?>" <?php if($Llamado->getId()==$NombreMesa) { echo 'selected';} ?> > <?php echo $Llamado->getNombre();?></option>
+                                <?php }   ?>
+                            </select>
+                    </div> 
+                        <input type="submit" name="reporte"  value="Ingresar" id="">
+                        </form>
                 </div>
-                <div class="row justify-content-center">
-                    <form method="post" action="../csv/reporte.php" align="center">  
-                        <input type="submit" name="reporte" value="Generales CSV" class="btn btn-success" />  
-                        <input type="submit" name="reporte" value="todoTiempo CSV" class="btn btn-success" />  
+            </div> 
+        <?php
+            /*foreach($ColeccionLlamado->getLlamado() as $Llamado){
+                $llam= $Llamado->getId().'a';
+                if(strlen(strstr(strtolower($llam),strtolower($NombreMesa.'')))> 0){
+                $NombreM = $Llamado->getNombre(); $NombreTipo = $Llamado->getTipo();
+                echo '<script type="text/javascript">alert("dasdas");</script>';
+                }
+            }*/
+              $cont=0;
+              $fechas= array();
+              @$Fecha =$_POST['fecha'];
+   
+              while(strlen(strstr($Fecha,','))){
+              $fecha1= strstr($Fecha, ',', true);
+              $Fecha= substr(strstr($Fecha,',').' ',1,-1);
+              $cont++; 
+                array_push($fechas,$fecha1);
+              }
+              array_push($fechas,$Fecha);
+              
+              if($cont==9 && $tipo== "general"){
+                for($i=0; $i<5; $i++){
+                  $INSERT="INSERT INTO FECHA ( orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fechas[$i]."','".$fechas[$i + 5]."',".$id.")";
+                    BDConexion::getInstancia()->query($INSERT);
+            ?>
+                <div style="display:none">
+                <form action="gestionExamen.php" id="POST" method="POST">
+                    <input type="text" name="identificador" value=<?php echo $id; ?>>
+                    <input type="text" name="Buscar" value="1">
+                </form>
                 </div>
-                <div class="row justify-content-center">
-                        <input type="submit" name="reporte" value="Generales PDF" class="btn btn-success" />  
-                        <input type="submit" name="reporte" value="todoTiempo PDF" class="btn btn-success" />  
-                    </form>
+                <script >document.getElementById("POST").submit();</script>
+            <?php
+                }
+              }else{
+                if($cont > 0 && $cont < 6){
+                      for($i=0; $i<=$cont; $i++){
+                      $fecha1=$fechas[$i];
+                      $INSERTE="INSERT INTO FECHA ( orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fecha1."',NULL,".$id.")";
+                      BDConexion::getInstancia()->query($INSERTE); 
+            ?>
+                <script >setTimeout("location.href='gestionExamen.php'",0);</script>
+            <?php
+                    }
+                  }
+              }
+            
+
+        ?>
+        <?php 
+        if(isset($_POST['reporte'])){ ?>
+        
+        <form action="inicio.php" method="POST">
+                <div class="container">
+                	<h3><?php echo $nombre; ?></h3>
+	                    <input type="text"  name="fecha" class="form-control date" placeholder="Pick the multiple dates"  >
+                        <input type="submit" name="insertar" class="btn btn-primary btn-block btn-lg"/>
                 </div>
-            <?php } ?>
-            </div>
-        </div>    
-        <br>
+        </form>
+    <?php } ?>                        
+    </div>
     </div>
 </div>
         <?php include_once '../gui/footer.php'; ?>
+        <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js'></script>
+        <script  src="../lib/calendar/script.js"></script>
     </body>
 </html>
 

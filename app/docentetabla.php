@@ -92,13 +92,11 @@
           <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>)">
               <span class="oi oi-pencil"></span>
           </button>
-        </td>
-        <td>
+        
           <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" onclick="PreguntarSiNO()">
              <span class="oi oi-trash"></span>
           </button>
-        </td>
-        <td>
+        
           <button class="btn btn-outline-primary" class="btn btn-outline-info">
              <span class="oi oi-zoom-in"></span>
           </button>
