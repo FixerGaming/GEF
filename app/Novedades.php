@@ -155,9 +155,6 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                                </button></a>
                          </td>
                          </tr>
-
-
-
         <?php
 
                               }
