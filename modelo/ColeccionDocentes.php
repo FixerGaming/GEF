@@ -12,7 +12,7 @@ class ColeccionDocentes extends BDColeccionGenerica{
 
     function __construct() {
         parent::__construct();
-        $this->setColeccion("PROFESOR","Docente");
+        $this->setColeccion("profesor","Docente");
         $this->docentes = $this->coleccion;
     }
 

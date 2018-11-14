@@ -3,7 +3,7 @@
 include_once 'BDObjetoGenerico.Class.php';
 include_once 'Rol.Class.php';
 
-class Docente extends BDObjetoGenerico {
+class Licencia extends BDObjetoGenerico {
 
     protected $email;
 
@@ -14,51 +14,33 @@ class Docente extends BDObjetoGenerico {
     private $roles;
 
     function __construct($id = null) {
-        parent::__construct($id, "PROFESOR");
+        parent::__construct($id, "Licencia");
     }
 
     function getId() {
         return $this->id;
     }
-    function getDni() {
-        return $this->dni;
+    function getFechaInicio() {
+        return $this->fechaInicio;
     }
-    function getNombre() {
-        return $this->nombre;
+    function getFechaFinal() {
+        return $this->fechaFinal;
     }
-    function getApellido() {
-        return $this->apellido;
-    }
-    function getEmail() {
-        return $this->email;
-    }
-    function getCategoria() {
-        return $this->categoria;
-    }
-    function getIdDepartamento() {
-        return $this->idDepartamento;
+    function getIdProfesor() {
+        return $this->idProfesor;
     }
 
     function setId($id) {
         $this->id = $id;
     }
-    function setDni($dni) {
-        $this->dni = $dni;
+    function setFechaInicio($fechaInicio) {
+        $this->fechaInicio = $fechaInicio;
     }
-    function setNombre($nombre) {
-        $this->nombre = $nombre;
+    function setFechaFinal($fechaFinal) {
+        $this->fechaFinal = $fechaFinal;
     }
-    function setApellido($apellido) {
-        $this->apellido = $apellido;
-    }
-    function setEmail($email) {
-        $this->email = $email;
-    }
-    function setCategoria($categoria) {
-        $this->categoria = $categoria;
-    }
-    function setIdDepartamento($idDepartamento) {
-        $this->idDepartamento = $idDepartamento;
+    function setApellido($idProfesor) {
+        $this->idProfesor = $idProfesor;
     }
 
 

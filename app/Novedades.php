@@ -2,10 +2,12 @@
 include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionDocentes.php';
-include_once '../modelo/ColeccionCargo.php';
+include_once '../modelo/ColeccionLicencia.php';
+include_once '../modelo/ColeccionTipoLicencia.php';
 include_once '../modelo/ColeccionDepartamento.php';
 $ColeccionDocente = new ColeccionDocentes();
-$ColeccionCargo = new ColeccionCargo();
+$ColeccionLicencias = new ColeccionLicencia();
+$ColeccionTipoLicencias = new ColeccionTipoLicencia();
 $ColeccionDepartamento = new ColeccionDepartamento(); ?>
 <html>
     <head>
@@ -19,7 +21,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
       <script type="text/javascript" src="../lib/bootstrap-4.1.1-dist/js/bootstrap.min.js"></script>
       <script type="text/javascript" src="../lib/alertifyjs/alertify.min.js"></script>
     <script type="text/javascript" src="../lib/alertifyjs/alertify.js"></script>
-        <title><?= Constantes::NOMBRE_SISTEMA; ?> - Gestionar Docente</title>
+        <title><?= Constantes::NOMBRE_SISTEMA; ?> - Gestionar Novedad</title>
     </head>
     <body>
         <?php include_once '../gui/navbar.php'; ?>
@@ -49,7 +51,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                         </div>
                         <div class="form-group">
                             <div class="form-row">
-                                <label for="inputDesdeIL">Por Dni</label>
+                                <label for="inputDesdeIL">Por Fecha de Inicio</label>
                             </div>
                             <div class="form-row">
                                 <input type="text" class="form-control " id="inputFechainicio" name="inputFechainicio" value="">
@@ -58,16 +60,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                         </div>
                         <div class="form-group">
                             <div class="form-row">
-                                <label for="inputDesdeIL">Por cargo</label>
-                            </div>
-                            <div class="form-row">
-                                <input type="text" class="form-control " id="inputFechainicio" name="inputFechainicio" value="">
-                                <small id="inputDocentes" class="form-text text-muted"></small>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <label for="inputDesdeIL">Por Departamento</label>
+                                <label for="inputDesdeIL">Por Fecha de finalizacion</label>
                             </div>
                             <div class="form-row">
                                 <input type="text" class="form-control " id="inputfechafinalizacion" name="inputFechafinalizacion" value="">
@@ -81,9 +74,9 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                         </div>
                     </form>
                     <p>
-                        <a href="docente.crear.php">
+                        <a href="novedad.crear.php">
                         <button type="button" class="btn btn-success btn-block btn-lg">
-                            <span class="oi oi-plus"></span> Nuevo Docente
+                            <span class="oi oi-plus"></span> Nueva Novedad
                         </button>
                         </a>
                     </p>
@@ -93,60 +86,86 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
             <div class="col-md-9 ml-md-auto">
                 <div class="card">
                    <div class="card-header alert-success">
-                   <span class="card-title">Listado de Docentes</span>
+                   <span class="card-title">Listado de Novedades</span>
                     </div>
                     <div class="card-body">
                         <table class ="table table-hover table-condensed table-bordered">
                             <tr scope="row">
-                              <td>Nombre</td>
-                              <td>Apellido</td>
-                              <td>Cargo</td>
-                              <td>Categoria</td>
-                              <td>Departamento</td>
-                              <td>Ver mas</td>
-                              <td>Editar</td>
-                              <td>Eliminar</td>
+                                <td>Nombre</td>
+                                <td>Apellido</td>
+                                <td>Departamento</td>
+                                <td width="700">Dias</td>
+                                <td>Regimen</td>
+                                <td>Ver Mas</td>
+                                <td>Editar</td>
+                                <td>Eliminar</td>
                             </tr>
 
-                            <tr>
-                                <?php foreach ($ColeccionDocente->getDocentes() as $Docente)
-                                        {
-                                          foreach ($ColeccionCargo->getCargos() as $Cargo)
-                                            {
-                                              foreach($ColeccionDepartamento->getDepartamentos() as $Departamento)
-                                                  {
-                                                if($Cargo->getidProfesorcarg () == $Docente->getId() && $Departamento->getId() == $Docente->getIdDepartamento())
-                                                    {
-                                    ?>
-                                    <td><?= $Docente->getNombre(); ?></td>
-                                    <td><?= $Docente->getApellido(); ?></td>
-                                    <td><?= $Cargo->gettipoCargo();?></td>
-                                    <td><?= $Docente->getCategoria(); ?></td>
-                                    <td><?= $Departamento->getNombre();?></td>
-                                    <td>
-                                        <a title="Ver detalle" href="docente.ver.php?id=<?= $Docente->getId();?>&id1=<?= $Cargo->getId();?>">
-                                            <button type="button" class="btn btn-outline-info">
-                                                <span class="oi oi-zoom-in"></span>
-                                            </button></a>
+                    <tr>
+                      <?php foreach ($ColeccionLicencias->getLicencias() as $Licencia)
+                       {
+                         foreach ($ColeccionDocente->getDocentes() as $Docente)
+                         {
+                           foreach($ColeccionTipoLicencias->getTipoLicencias() as $TipoLicencia)
+                            {
+                              foreach($ColeccionDepartamento->getDepartamentos() as $Departamento)
+                              {
+                              if ($Licencia->getIdProfesor() == $Docente->getId() && $Licencia->getId() == $TipoLicencia->getIdLicencia() && $Docente->getIdDepartamento()==$Departamento->getId())
+                              {
+                                $datetime = date_create(date("d-m-Y"));
+                                $Color="";
+                                $datetimecomparable= $Licencia->getFechaFinal();
+                                $datetime2=date_create_from_format('Y-m-d', $datetimecomparable);
+                                if ($datetime2 < $datetime)
+                                {
+                                  $Color="#9c9c9c";
+                                  echo "es mas chico";
+                                }
+                                else
+                                {
+                                  $Color="#ffffff";
+                                  echo "es mas grande";
+                                }
 
-                                    </td>
-                                    <td>
-                                        <a title="Modificar" href="docente.modificar.php?id=<?= $Docente->getId();?>&id1=<?= $Cargo->getId();?>">
-                                            <button type="button" class="btn btn-outline-warning">
-                                                <span class="oi oi-pencil"></span>
-                                            </button></a>
-                                    </td>
-                                    <td>
-                                        <a title="Eliminar" href="docente.eliminar.php?id=<?= $Docente->getId(); ?>&id1=<?= $Cargo->getId();?>">
-                                          <button class="btn btn-outline-danger" class="btn btn-outline-info">
-                                             <span class="oi oi-trash"></span>
-                                          </button></a>
-                                    </td>
-                                </tr>
-                            <?php }
+
+
+                         ?>
+                         <td style="background-color: <?php echo $Color;?>"><?= $Docente->getNombre(); ?></td>
+                         <td style="background-color:".$Color."" ><?= $Docente->getApellido(); ?></td>
+                         <td style="background-color:".$Color."" ><?= $Departamento->getNombre(); ?></td>
+                         <td style="background-color:".$Color.""  width="700"><?= $Licencia->getFechaInicio(),"/",$Licencia->getFechaFinal();?></td>
+                         <td style="background-color:".$Color."" ><?= $TipoLicencia->getNombre();?></td>
+                         <td style="background-color:".$Color."" >
+                             <a title="Ver detalle" href="novedad.ver.php?id=<?= $Licencia->getId();?>&id1=<?= $TipoLicencia->getId();?>">
+                                 <button type="button" class="btn btn-outline-info">
+                                     <span class="oi oi-zoom-in"></span>
+                                 </button></a>
+
+                         </td>
+                         <td style="background-color:".$Color."" >
+                             <a title="Modificar" href="novedad.modificar.php?id=<?= $Licencia->getId();?>&id1=<?= $TipoLicencia->getId();?>">
+                                 <button type="button" class="btn btn-outline-warning">
+                                     <span class="oi oi-pencil"></span>
+                                 </button></a>
+                         </td>
+                         <td style="background-color:".$Color."">
+                             <a title="Eliminar" href="novedades.eliminar.php?id=<?= $Licencia->getId(); ?>&id1=<?= $TipoLicencia->getId();?>&id2=<?=$Docente->getId();?>">
+                               <button class="btn btn-outline-danger" class="btn btn-outline-info">
+                                  <span class="oi oi-trash"></span>
+                               </button></a>
+                         </td>
+                         </tr>
+
+
+
+        <?php
+
+                              }
+                             }
                           }
-                         }
-                       } ?>
+                        }
+                     }
+        ?>
                     </table>
                   </div>
               </div>

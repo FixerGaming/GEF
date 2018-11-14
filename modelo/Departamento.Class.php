@@ -3,7 +3,7 @@
 include_once 'BDObjetoGenerico.Class.php';
 include_once 'Rol.Class.php';
 
-class Docente extends BDObjetoGenerico {
+class Departamento extends BDObjetoGenerico {
 
     protected $email;
 
@@ -14,54 +14,24 @@ class Docente extends BDObjetoGenerico {
     private $roles;
 
     function __construct($id = null) {
-        parent::__construct($id, "PROFESOR");
+        parent::__construct($id, "departamento");
     }
+
 
     function getId() {
         return $this->id;
     }
-    function getDni() {
-        return $this->dni;
-    }
     function getNombre() {
         return $this->nombre;
-    }
-    function getApellido() {
-        return $this->apellido;
-    }
-    function getEmail() {
-        return $this->email;
-    }
-    function getCategoria() {
-        return $this->categoria;
-    }
-    function getIdDepartamento() {
-        return $this->idDepartamento;
     }
 
     function setId($id) {
         $this->id = $id;
     }
-    function setDni($dni) {
-        $this->dni = $dni;
-    }
     function setNombre($nombre) {
         $this->nombre = $nombre;
     }
-    function setApellido($apellido) {
-        $this->apellido = $apellido;
-    }
-    function setEmail($email) {
-        $this->email = $email;
-    }
-    function setCategoria($categoria) {
-        $this->categoria = $categoria;
-    }
-    function setIdDepartamento($idDepartamento) {
-        $this->idDepartamento = $idDepartamento;
-    }
-
-
+    
     /**
      *
      * @param type $tablaVinculacion

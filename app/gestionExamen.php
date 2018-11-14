@@ -2,7 +2,7 @@
 include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionCarrera.php';
-$ColeccionCarrera = new ColeccionCarrera()
+$ColeccionCarrera = new ColeccionCarrera();
 ?>
 
 <html>
@@ -88,10 +88,30 @@ $ColeccionCarrera = new ColeccionCarrera()
             </div>
             <div class="col-md-9">
             <?php 
-                @$ID=$_POST['identificador']; 
+                @$ID=$_POST['identificador'];
+                @$Carrera=$_POST['selectCarrera'];
+                @$Asignatura=$_POST['inputAsignatura'];
+                @$Docente=$_POST['inputDocente'];
+                @$General=$_POST['General'];
+                @$TodoTiempo=$_POST['TodoTiempo'];
+                @$Extraordinaria=$_POST['Extraordinaria'];
+
             if(isset($_POST['Buscar'])){ 
-                
-               $reporte="SELECT C.id, C.nombre AS Carrera, A.nombre AS Asignatura, P.nombre AS presidente,P1.nombre AS vocal,P2.nombre, P3.nombre AS vocal1, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
+                @$ID=$_POST['identificador'];
+
+                if(!empty($_POST['selectCarrera'])){
+                    $WHERE= "SELECT C.id AS id FROM CARRERA C WHERE C.id LIKE '%".$Carrera."%'";
+                    $Consulta1 = BDConexion::getInstancia()->query($WHERE);
+                    $row = $Consulta1->fetch_assoc();
+                        $identificador2=$row['id'];
+                }
+                    if(!empty($_POST['inputAsignatura'])){
+                        $WHERE= "SELECT A.nombre AS nombre FROM ASIGNATURA A WHERE A.nombre LIKE '%".$Asignatura."%'";
+                        $Consulta2 = BDConexion::getInstancia()->query($WHERE);
+                        $row = $Consulta2->fetch_assoc();
+                            $identificador3=$row['nombre'];    
+                    }
+                $reporte="SELECT C.id AS id, C.nombre AS Carrera, A.nombre AS Asignatura, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
                 FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
                 INNER JOIN PROFESOR P ON T.presidente = P.id
                 LEFT JOIN PROFESOR P1 ON  T.vocal = P1.id
@@ -106,6 +126,7 @@ $ColeccionCarrera = new ColeccionCarrera()
                 WHERE L.id LIKE '%".$ID."%'";
 
                 $reporteCsv= BDConexion::getInstancia()->query($reporte);
+
             ?>    
                 <div class="card">
                    <div class="card-header alert-success">
@@ -133,7 +154,8 @@ $ColeccionCarrera = new ColeccionCarrera()
                             </tr>
                     </div>       
                     <?php 
-                        while($row = $reporteCsv->fetch_assoc())  
+                    
+                        while($row = $reporteCsv->fetch_assoc()) 
                         { 
                             echo
                             '<tr>
@@ -163,18 +185,10 @@ $ColeccionCarrera = new ColeccionCarrera()
                                 </button>
                             </td>
                             </tr>';  
-                           // var_dump($row);
                         }  
                     ?>
                     </table>            
                 </div> 
-                <div class="card-footer">
-                    <ul class="pagination justify-content-center">
-                    <li class = "page-item active"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=1&accion=busquedaAvanzada"> 1</a></li><li class = "page-item "><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> 2</a></li><li class = "page-item"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> &gt;</a></li>        </ul> 
-                    <span class="pagination justify-content-center">
-                        Mostrando 1-10 de 6384        
-                    </span>
-                </div>
             <?php } ?>           
             </div>
         </div>    

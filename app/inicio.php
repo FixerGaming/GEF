@@ -3,7 +3,6 @@ include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionLlamado.php';
 include_once '../modelo/BDConexion.Class.php';
-
 $ColeccionLlamado = new ColeccionLlamado();
 ?>
 
@@ -27,16 +26,16 @@ $ColeccionLlamado = new ColeccionLlamado();
         <?php include_once '../gui/navbar.php'; ?>
 <div class="container-fluid "> 
     <div class="container">
-    <div class="row justify-content-around">
-          <div class=" col-sm-3">
+        <div class="row justify-content-around">
+            <div class=" col-sm-3">
                 <div class="card">
                     <div class="card-header alert-info">
                     <?php @$NombreMesa = $_POST['NombreMesa'];
-                        $Consulta="SELECT L.tipo AS tipo, L.id AS id, L.nombre AS nombre FROM LLAMADO L WHERE L.id LIKE '%".$NombreMesa."%'";
+                        $Consulta="SELECT L.id AS identifica, L.tipo AS tipo, L.nombre AS nombre FROM LLAMADO L WHERE L.id LIKE '%".$NombreMesa."%'";
                         $Consultas=BDConexion::getInstancia()->query($Consulta);
                         $row = $Consultas->fetch_assoc();
                         $tipo=$row['tipo'];
-                        $id=$row['id'];
+                        $identifica=$row['identifica'];
                         $nombre=$row['nombre'];
                     ?>
                         <form action="inicio.php" method="POST" name="formulario">
@@ -57,11 +56,10 @@ $ColeccionLlamado = new ColeccionLlamado();
                 $NombreM = $Llamado->getNombre(); $NombreTipo = $Llamado->getTipo();
                 echo '<script type="text/javascript">alert("dasdas");</script>';
                 }
-            }*/
+            }
               $cont=0;
               $fechas= array();
               @$Fecha =$_POST['fecha'];
-   
               while(strlen(strstr($Fecha,','))){
               $fecha1= strstr($Fecha, ',', true);
               $Fecha= substr(strstr($Fecha,',').' ',1,-1);
@@ -70,53 +68,66 @@ $ColeccionLlamado = new ColeccionLlamado();
               }
               array_push($fechas,$Fecha);
               
-              if($cont==9 && $tipo== "general"){
+              if($cont== 9 && $tipo == "general"){  
                 for($i=0; $i<5; $i++){
-                  $INSERT="INSERT INTO FECHA ( orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fechas[$i]."','".$fechas[$i + 5]."',".$id.")";
+                  $INSERT="INSERT INTO FECHA (orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fechas[$i]."','".$fechas[$i + 5]."',".$identifica.")";
                     BDConexion::getInstancia()->query($INSERT);
             ?>
                 <div style="display:none">
                 <form action="gestionExamen.php" id="POST" method="POST">
-                    <input type="text" name="identificador" value=<?php echo $id; ?>>
+                    <input type="text" name="identificador" value=<?php echo $identifica; ?>>
                     <input type="text" name="Buscar" value="1">
                 </form>
                 </div>
                 <script >document.getElementById("POST").submit();</script>
             <?php
                 }
-              }else{
+            }else
+            {
                 if($cont > 0 && $cont < 6){
                       for($i=0; $i<=$cont; $i++){
                       $fecha1=$fechas[$i];
-                      $INSERTE="INSERT INTO FECHA ( orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fecha1."',NULL,".$id.")";
+                      $INSERTE="INSERT INTO FECHA (orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fecha1."',NULL,".$id.")";
                       BDConexion::getInstancia()->query($INSERTE); 
             ?>
-                <script >setTimeout("location.href='gestionExamen.php'",0);</script>
+            <div style="display:none">
+                <form action="gestionExamen.php" id="POST" method="POST">
+                    <input type="text" name="identificador" value=<?php echo $id; ?>>
+                    <input type="text" name="Buscar" value="1">
+                </form>
+            </div>
+                <script >document.getElementById("POST").submit();</script>            
             <?php
                     }
-                  }
-              }
-            
-
-        ?>
+                }
+            }
+            ?>
         <?php 
-        if(isset($_POST['reporte'])){ ?>
-        
+        if(isset($_POST['reporte'])){ 
+            if($tipo=="general"){
+                echo '<h2>Total de Llamados: 2</h2>';
+            }else{
+                echo'<h2>Total de Llamados: 1</h2>';
+            }
+        ?>
+
         <form action="inicio.php" method="POST">
                 <div class="container">
-                	<h3><?php echo $nombre; ?></h3>
+                    <h3><?php echo $nombre; ?></h3>
+                    <input type="hidden" />
 	                    <input type="text"  name="fecha" class="form-control date" placeholder="Pick the multiple dates"  >
-                        <input type="submit" name="insertar" class="btn btn-primary btn-block btn-lg"/>
+                        <input type="submit"  name="insertar" class="btn btn-primary btn-block btn-lg"/>
                 </div>
         </form>
-    <?php } ?>                        
+    <?php } ?> */                  
+    ?>
     </div>
     </div>
 </div>
-        <?php include_once '../gui/footer.php'; ?>
+      <!--  <?php include_once '../gui/footer.php'; ?>
         <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js'></script>
-        <script  src="../lib/calendar/script.js"></script>
+        <script  src="../lib/calendar/script.js"></script>-->
     </body>
 </html>
 
