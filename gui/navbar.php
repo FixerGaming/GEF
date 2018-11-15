@@ -13,15 +13,9 @@
         <ul class="navbar-nav mr-auto">
 
             <li class="nav-item">
-                <a class="nav-link" href="../app/inicio.php">
+                <a class="nav-link" href="../app/usuarios.php">
                     <span class="oi oi-person" />
-                    Inicio
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="../app/gestionExamen.php">
-                    <span class="oi oi-spreadsheet" />
-                    Gestionar mesa de examen
+                    Usuarios
                 </a>
             </li>
             <li class="nav-item">
@@ -35,23 +29,29 @@
                     <span class="oi oi-person" />
                     Gestionar Novedades
                 </a>
-            </li>          
-            <!--<?php if (ControlAcceso::verificaPermiso(PermisosSistema::PERMISO_ROLES)) { ?>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../app/inicio.php">
+                    <span class="oi oi-spreadsheet" />
+                    Gestionar mesa de examen
+                </a>
+            </li>
+            <?php if (ControlAcceso::verificaPermiso(PermisosSistema::PERMISO_ROLES)) { ?>
                 <li class = "nav-item">
                     <a class = "nav-link" href = "../app/roles.php">
                         <span class = "oi oi-graph" />
                         Roles
                     </a>
-                </li>-->
+                </li>
             <?php } ?>
 
-            <!--<?php if (ControlAcceso::verificaPermiso(PermisosSistema::PERMISO_PERMISOS)) { ?>
+            <?php if (ControlAcceso::verificaPermiso(PermisosSistema::PERMISO_PERMISOS)) { ?>
                 <li class="nav-item">
                     <a class="nav-link" href="../app/permisos.php">
                         <span class="oi oi-lock-locked" />
                         Permisos
                     </a>
-                </li>-->
+                </li>
                 <?php } ?>
 
                 <li class="nav-item">

@@ -3,7 +3,6 @@ include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionCarrera.php';
 $ColeccionCarrera = new ColeccionCarrera();
-
 ?>
 
 <html>
@@ -48,7 +47,7 @@ $ColeccionCarrera = new ColeccionCarrera();
                                 <label for="inputExpediente">Por Asignatura</label> 
                             </div>
                             <div class="form-row">
-                                <input type="text" class="form-control"  name="inputAsignatura">
+                                <input type="text" class="form-control" id="Asignatura" name="inputAsignatura" value="">
                                 <small  class="form-text text-muted"></small>                   
                             </div>
                         </div>
@@ -89,8 +88,6 @@ $ColeccionCarrera = new ColeccionCarrera();
             </div>
             <div class="col-md-9">
             <?php 
-
-                @$TIPO=$_POST['tipo'];
                 @$ID=$_POST['identificador'];
                 @$Carrera=$_POST['selectCarrera'];
                 @$Asignatura=$_POST['inputAsignatura'];
@@ -98,27 +95,22 @@ $ColeccionCarrera = new ColeccionCarrera();
                 @$General=$_POST['General'];
                 @$TodoTiempo=$_POST['TodoTiempo'];
                 @$Extraordinaria=$_POST['Extraordinaria'];
-            
-                              
+
             if(isset($_POST['Buscar'])){ 
-                if(!empty($ID)){
-                    @$AUX= "AND L.id = '".$ID."'";
+                @$ID=$_POST['identificador'];
+
+                if(!empty($_POST['selectCarrera'])){
+                    $WHERE= "SELECT C.id AS id FROM CARRERA C WHERE C.id LIKE '%".$Carrera."%'";
+                    $Consulta1 = BDConexion::getInstancia()->query($WHERE);
+                    $row = $Consulta1->fetch_assoc();
+                        $identificador2=$row['id'];
                 }
-                if(empty($Asignatura)){
-                    if(empty($Docente)){
-                        if(empty($Carrera)){
-                            $WHERE = "";
-                        }else{
-                        $WHERE= "AND C.id = '".$Carrera."'";
-                        }
-                    }else{
-                    $WHERE= "AND P.nombre = '".$Docente."'";
+                    if(!empty($_POST['inputAsignatura'])){
+                        $WHERE= "SELECT A.nombre AS nombre FROM ASIGNATURA A WHERE A.nombre LIKE '%".$Asignatura."%'";
+                        $Consulta2 = BDConexion::getInstancia()->query($WHERE);
+                        $row = $Consulta2->fetch_assoc();
+                            $identificador3=$row['nombre'];    
                     }
-                }else{
-                $WHERE= "AND A.nombre = '".$Asignatura."'";
-                }
-                
-                
                 $reporte="SELECT C.id AS id, C.nombre AS Carrera, A.nombre AS Asignatura, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
                 FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
                 INNER JOIN PROFESOR P ON T.presidente = P.id
@@ -131,12 +123,10 @@ $ColeccionCarrera = new ColeccionCarrera();
                 INNER JOIN  LLAMADO_MESA_EXAMEN LM ON LM.idMesa= M.id
                 INNER JOIN LLAMADO L ON L.id = LM.idLlamado
                 INNER JOIN FECHA F ON F.LLAMADO_id= L.id
-                WHERE  M.orden= F.orden
-                $AUX 
-                $WHERE";
+                WHERE L.id LIKE '%".$ID."%'";
 
                 $reporteCsv= BDConexion::getInstancia()->query($reporte);
-                
+
             ?>    
                 <div class="card">
                    <div class="card-header alert-success">
@@ -155,84 +145,46 @@ $ColeccionCarrera = new ColeccionCarrera();
                                 <td>Vocal2</td>
                                 <td>Suplente</td>
                                 <td>1Llamado</td>
-                            <?php if(empty(@$TIPO) || @$TIPO == "general"){?>
                                 <td>2Llamado</td>
                                 <td>Hora</td>
-                                <td>Ver Mas</td>
                                 <td>Modificar</td>
                                 <td>Eliminar</td>
-                            <?php }else { ?>
-                                <td>Hora</td>
                                 <td>Ver Mas</td>
-                                <td>Modificar</td>
-                                <td>Eliminar</td>
                                 
-                                <?php } ?>
                             </tr>
                     </div>       
                     <?php 
+                    
                         while($row = $reporteCsv->fetch_assoc()) 
                         { 
-                            if(empty(@$TIPO) || @$TIPO == "general"){
-                                echo
-                                '<tr>
-                                <td>'.$row['id'].'</td>
-                                <td>'.$row['Carrera'].'</td>
-                                <td>'.$row['Asignatura'].'</td>
-                                <td>'.$row['presidente'].'</td>
-                                <td>'.$row['vocal'].'</td>
-                                <td>'.@$row['vocal1'].'</td>
-                                <td>'.@$row['suplente'].'</td>
-                                <td>'.$row['fecha1'].'</td>
-                                <td>'.$row['fecha2'].'</td>
-                                <td>'.$row['hora'].'</td>
-                                <td align="center">
+                            echo
+                            '<tr>
+                            <td>'.$row['id'].'</td>
+                            <td>'.$row['Carrera'].'</td>
+                            <td>'.$row['Asignatura'].'</td>
+                            <td>'.$row['presidente'].'</td>
+                            <td>'.$row['vocal'].'</td>
+                            <td>'.@$row['vocal1'].'</td>
+                            <td>'.@$row['suplente'].'</td>
+                            <td>'.$row['fecha1'].'</td>
+                            <td>'.$row['fecha2'].'</td>
+                            <td>'.$row['hora'].'</td>
+                            <td align="center">
+                                <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
+                                <span class="oi oi-pencil"></span>
+                                </button>
+                            </td>
+                            <td align="center">
+                                <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" onclick="PreguntarSiNO()">
+                                <span class="oi oi-trash"></span>
+                                </button>
+                            </td>
+                            <td align="center">
                                 <button class="btn btn-outline-primary" class="btn btn-outline-info">
                                 <span class="oi oi-zoom-in"></span>
                                 </button>
-                                </td>
-                                <td align="center">
-                                    <a title="Modificar" href="novedad.modificar.php?id=<?= $Licencia->getId();?>&id1=<?= $TipoLicencia->getId();?>">
-                                    <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
-                                    <span class="oi oi-pencil"></span>
-                                    </button>
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" onclick="PreguntarSiNO()">
-                                    <span class="oi oi-trash"></span>
-                                    </button>
-                                </td>
-                               
-                                </tr>';  
-                            }else{
-                                echo
-                                '<tr>
-                                <td>'.$row['id'].'</td>
-                                <td>'.$row['Carrera'].'</td>
-                                <td>'.$row['Asignatura'].'</td>
-                                <td>'.$row['presidente'].'</td>
-                                <td>'.$row['vocal'].'</td>
-                                <td>'.@$row['vocal1'].'</td>
-                                <td>'.@$row['suplente'].'</td>
-                                <td>'.$row['fecha1'].'</td>
-                                <td>'.$row['hora'].'</td>
-                                <td align="center">
-                                    <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
-                                    <span class="oi oi-pencil"></span>
-                                    </button>
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" onclick="PreguntarSiNO()">
-                                    <span class="oi oi-trash"></span>
-                                    </button>
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-outline-primary" class="btn btn-outline-info">
-                                    <span class="oi oi-zoom-in"></span>
-                                    </button>
-                                </td>
-                                </tr>';  
-                            }
+                            </td>
+                            </tr>';  
                         }  
                     ?>
                     </table>            
