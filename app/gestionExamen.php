@@ -3,7 +3,6 @@ include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionCarrera.php';
 $ColeccionCarrera = new ColeccionCarrera();
-
 ?>
 
 <html>
@@ -61,45 +60,39 @@ $ColeccionCarrera = new ColeccionCarrera();
                                 <small id="inputDocentes" class="form-text text-muted"></small>                   
                             </div>
                         </div>                                  
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="general" id="general" name="General">
-                            <label class="form-check-label" for="defaultCheck1">
-                                General
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="todotiempo" id="todoTiempo" name="TodoTiempo">
-                            <label class="form-check-label" for="defaultCheck1">
-                                Todo Tiempo
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="extraordinaria" id="extraordinaria" name="Extraordinaria">
-                            <label class="form-check-label" for="defaultCheck1">
-                                Extraordinaria
-                            </label>
-                        </div>
                         <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                         <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block btn-lg" name="Buscar">Realizar b&uacute;squeda</button>
                         </div>
                     </form>
+                    <p>
+                        <a href="examen.crear.php">
+                        <button type="button" class="btn btn-success btn-block btn-lg">
+                            <span class="oi oi-plus"></span> Nuevo Examen
+                        </button>
+                        </a>
+                    </p>
+                        <form action="../csv/reporte.php" method="POST">
+                            <button tyoe="submit"  name="reporte"  class="btn btn-outline-primary">GENERAR CSV 1</button>
+                            <br>
+                            <br>
+                            <button  type="submit" name="reporte1" class="btn btn-outline-primary">GENERAR CSV 2</button>
+                        </form>
                     </div>
                 </div>
             </div>
             <div class="col-md-9">
             <?php 
-
+                $AUX="";
                 @$TIPO=$_POST['tipo'];
                 @$ID=$_POST['identificador'];
+                @$Nombre=$_POST['nombre'];
                 @$Carrera=$_POST['selectCarrera'];
                 @$Asignatura=$_POST['inputAsignatura'];
                 @$Docente=$_POST['inputDocente'];
-                @$General=$_POST['General'];
-                @$TodoTiempo=$_POST['TodoTiempo'];
-                @$Extraordinaria=$_POST['Extraordinaria'];
-            
-                              
+              
+                echo $Nombre;
+                        
             if(isset($_POST['Buscar'])){ 
                 if(!empty($ID)){
                     @$AUX= "AND L.id = '".$ID."'";
@@ -119,7 +112,7 @@ $ColeccionCarrera = new ColeccionCarrera();
                 }
                 
                 
-                $reporte="SELECT C.id AS id, C.nombre AS Carrera, A.nombre AS Asignatura, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
+                $reporte="SELECT C.id AS id,LM.idLlamado AS idLlamado, LM.idMesa AS idMesa, C.nombre AS Carrera, A.nombre AS Asignatura,A.id AS Asignaturaid,T.id AS tribunal, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
                 FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
                 INNER JOIN PROFESOR P ON T.presidente = P.id
                 LEFT JOIN PROFESOR P1 ON  T.vocal = P1.id
@@ -131,7 +124,8 @@ $ColeccionCarrera = new ColeccionCarrera();
                 INNER JOIN  LLAMADO_MESA_EXAMEN LM ON LM.idMesa= M.id
                 INNER JOIN LLAMADO L ON L.id = LM.idLlamado
                 INNER JOIN FECHA F ON F.LLAMADO_id= L.id
-                WHERE  M.orden= F.orden
+                WHERE  M.orden= F.orden 
+                AND L.nombre like '%".$Nombre."%' 
                 $AUX 
                 $WHERE";
 
@@ -143,6 +137,16 @@ $ColeccionCarrera = new ColeccionCarrera();
                    <span class="card-title">Listado de Examenes</span>
                     </div>
                     <div class="card-body">
+                        <div>
+                        <form action="../pdf/" method="POST">
+                        <input type="hidden" name="id" value=<?php echo $Carrera;?>>
+                        <input type="hidden" name="asignatura" value=<?php echo $Asignatura;?>>
+                        <input type="hidden" name="Docente" value=<?php echo $Docente;?>>
+                        <input type="hidden" name="id2" value=<?php echo $ID;?>>
+                        <input type="hidden" name="Tipo" value=<?php echo $TIPO;?>>
+                        <button class="btn btn-outline-warning">GENERAR PDF</button>
+                        </form>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -173,49 +177,64 @@ $ColeccionCarrera = new ColeccionCarrera();
                     <?php 
                         while($row = $reporteCsv->fetch_assoc()) 
                         { 
+                            $id= $row['id'];
+                            $carrera=$row['Carrera'];
+                            $asignatura= $row['Asignatura'];
+                            $presidente= $row['presidente'];
+                            $vocal= $row['vocal'];
+                            $vocal1 =$row['vocal1'];
+                            $suplente= $row['suplente'];
+                            $fecha1= $row['fecha1'];
+                            $hora=$row['hora'];
+                            $tribunal=$row['tribunal'];
+                            $idLlamado=$row['idLlamado'];
+                            $idMesa=$row['idMesa'];
+                            $idasignatura=$row['Asignaturaid'];
                             if(empty(@$TIPO) || @$TIPO == "general"){
+                                $fecha2= $row['fecha2'];
                                 echo
                                 '<tr>
-                                <td>'.$row['id'].'</td>
-                                <td>'.$row['Carrera'].'</td>
-                                <td>'.$row['Asignatura'].'</td>
-                                <td>'.$row['presidente'].'</td>
-                                <td>'.$row['vocal'].'</td>
-                                <td>'.@$row['vocal1'].'</td>
-                                <td>'.@$row['suplente'].'</td>
-                                <td>'.$row['fecha1'].'</td>
-                                <td>'.$row['fecha2'].'</td>
-                                <td>'.$row['hora'].'</td>
+                                <td>'.$id.'</td>
+                                <td>'.$carrera.'</td>
+                                <td>'.$asignatura.'</td>
+                                <td>'.$presidente.'</td>
+                                <td>'.$vocal.'</td>
+                                <td>'.$vocal1.'</td>
+                                <td>'.$suplente.'</td>
+                                <td>'.$fecha1.'</td>
+                                <td>'.$fecha2.'</td>
+                                <td>'.$hora.'</td>
                                 <td align="center">
                                 <button class="btn btn-outline-primary" class="btn btn-outline-info">
                                 <span class="oi oi-zoom-in"></span>
                                 </button>
                                 </td>
                                 <td align="center">
-                                    <a title="Modificar" href="novedad.modificar.php?id=<?= $Licencia->getId();?>&id1=<?= $TipoLicencia->getId();?>">
+                                    <a title="Modificar" href="examen.modificar.php?id='.$tribunal.'&pres='.$presidente.'&vol='.$vocal.'&vol1='.$vocal1.'&sup='.$suplente.'&hora='.$hora.'&llam='.$idLlamado.'&mes='.$idMesa.'">
                                     <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
                                     <span class="oi oi-pencil"></span>
                                     </button>
                                 </td>
                                 <td align="center">
-                                    <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" onclick="PreguntarSiNO()">
-                                    <span class="oi oi-trash"></span>
-                                    </button>
+                                <a title="Eliminar" href="examen.eliminar.php?id='.$tribunal.'&llam='.$idLlamado.'&asignatura='.$asignatura.'&idasig='.$idasignatura.'&mes='.$idMesa.'">
+                                <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" ">
+                                <span class="oi oi-trash"></span>
+                                </button>
                                 </td>
                                
                                 </tr>';  
                             }else{
                                 echo
                                 '<tr>
-                                <td>'.$row['id'].'</td>
-                                <td>'.$row['Carrera'].'</td>
-                                <td>'.$row['Asignatura'].'</td>
-                                <td>'.$row['presidente'].'</td>
-                                <td>'.$row['vocal'].'</td>
-                                <td>'.@$row['vocal1'].'</td>
-                                <td>'.@$row['suplente'].'</td>
-                                <td>'.$row['fecha1'].'</td>
-                                <td>'.$row['hora'].'</td>
+                                <td>'.$id.'</td>
+                                <td>'.$carrera.'</td>
+                                <td>'.$asignatura.'</td>
+                                <td>'.$presidente.'</td>
+                                <td>'.$vocal.'</td>
+                                <td>'.$vocal1.'</td>
+                                <td>'.$suplente.'</td>
+                                <td>'.$fecha1.'</td>
+                                <td>'.$hora.'</td>
                                 <td align="center">
                                     <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
                                     <span class="oi oi-pencil"></span>
@@ -243,6 +262,7 @@ $ColeccionCarrera = new ColeccionCarrera();
         <br>
     </div>
 </div>
+
         <?php include_once '../gui/footer.php'; ?>
     </body>
 </html>

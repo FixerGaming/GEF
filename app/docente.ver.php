@@ -3,8 +3,10 @@ include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionDocentes.php';
 include_once '../modelo/ColeccionCargo.php';
+include_once '../modelo/ColeccionDepartamento.php';
 $Docente = new Docente($_GET["id"]);
 $Cargo = new Cargo($_GET["id1"]);
+$Departamento = new Departamento($_GET["id2"]);
 ?>
 <html>
     <head>
@@ -24,8 +26,23 @@ $Cargo = new Cargo($_GET["id1"]);
                     <h3>Datos del Docente</h3>
                 </div>
                 <div class="card-body">
+                      <h4 class="card-text">Nombre</h4>
+                    <p> <?= $Docente->getNombre(); ?></p>
+                    <hr />
+                      <h4 class="card-text">Apellido</h4>
+                    <p> <?= $Docente->getApellido(); ?></p>
+                    <hr />
                     <h4 class="card-text">Dni</h4>
                     <p> <?= $Docente->getDni(); ?></p>
+                    <hr />
+                    <h4 class="card-text">Cargo</h4>
+                        <p> <?= $Cargo->gettipoCargo(); ?> </p>
+                    <hr />
+                    <h4 class="card-text">Categoria</h4>
+                        <p> <?= $Docente->getCategoria(); ?> </p>
+                    <hr />
+                    <h4 class="card-text">Departamento</h4>
+                        <p> <?= $Departamento->getNombre(); ?> </p>
                     <hr />
                     <h4 class="card-text">Email</h4>
                     <p> <?= $Docente->getEmail(); ?></p>
@@ -33,6 +50,7 @@ $Cargo = new Cargo($_GET["id1"]);
                     <h4 class="card-text">Tipo de Dedicacion</h4>
                         <p> <?= $Cargo->gettipoDedicacion(); ?> </p>
                     <hr />
+
                     <h5 class="card-text">Opciones</h5>
                     <a href="docente.php">
                         <button type="button" class="btn btn-primary">

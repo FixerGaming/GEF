@@ -3,8 +3,17 @@ include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionLicencia.php';
 include_once '../modelo/ColeccionTipoLicencia.php';
+include_once '../modelo/ColeccionDocentes.php';
+include_once '../modelo/ColeccionDepartamento.php';
+
 $Licencia = new Licencia($_GET["id"]);
 $TipoLicencia = new TipoLicencia($_GET["id1"]);
+$Docente = new Docente($_GET["id3"]);
+$fecha = new DateTime($Licencia->getFechaInicio());
+$fecha_d_m_y1 = $fecha->format('d-m-Y');
+$fecha = new DateTime($Licencia->getFechaFinal());
+$fecha_d_m_y2 = $fecha->format('d-m-Y');
+$Departamento = new Departamento($Docente->getIdDepartamento());
 ?>
 <html>
     <head>
@@ -24,6 +33,21 @@ $TipoLicencia = new TipoLicencia($_GET["id1"]);
                     <h3>Datos de la licencia</h3>
                 </div>
                 <div class="card-body">
+                    <h4 class="card-text">Nombre de Docente</h4>
+                    <p> <?= $Docente->getNombre(); ?></p>
+                    <hr />
+                     <h4 class="card-text">Departamento</h4>
+                    <p> <?= $Departamento->getNombre(); ?></p>
+                    <hr />
+                    <h4 class="card-text">Nombre de Licencia</h4>
+                    <p> <?= $TipoLicencia->getNombre(); ?></p>
+                    <hr />
+                     <h4 class="card-text">Fecha de Inicio</h4>
+                    <p> <?= $fecha_d_m_y1 ?></p>
+                    <hr />
+                    <h4 class="card-text">Fecha de Final</h4>
+                    <p> <?= $fecha_d_m_y2 ?></p>
+                    <hr />
                     <h4 class="card-text">Descripcion</h4>
                     <p> <?= $TipoLicencia->getDescripcion(); ?></p>
                     <hr />

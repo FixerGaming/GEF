@@ -18,7 +18,7 @@ $Docente = new Docente($id2);
         <link rel="stylesheet" href="../lib/open-iconic-master/font/css/open-iconic-bootstrap.css" />
         <script type="text/javascript" src="../lib/JQuery/jquery-3.3.1.js"></script>
         <script type="text/javascript" src="../lib/bootstrap-4.1.1-dist/js/bootstrap.min.js"></script>
-        <title><?php echo Constantes::NOMBRE_SISTEMA; ?> - Eliminar Docente</title>
+        <title><?php echo Constantes::NOMBRE_SISTEMA; ?> - Eliminar Novedad</title>
     </head>
     <body>
         <?php include_once '../gui/navbar.php'; ?>
@@ -26,7 +26,7 @@ $Docente = new Docente($id2);
             <form action="novedad.eliminar.procesar.php" method="post">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Eliminar Docente</h3>
+                        <h3>Eliminar Novedad</h3>
                     </div>
                     <div class="card-body">
                         <p class="alert alert-warning ">

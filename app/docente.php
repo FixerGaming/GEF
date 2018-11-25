@@ -19,6 +19,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
       <script type="text/javascript" src="../lib/bootstrap-4.1.1-dist/js/bootstrap.min.js"></script>
       <script type="text/javascript" src="../lib/alertifyjs/alertify.min.js"></script>
     <script type="text/javascript" src="../lib/alertifyjs/alertify.js"></script>
+    <script type="text/javascript" src="../lib/validar.js"></script>
         <title><?= Constantes::NOMBRE_SISTEMA; ?> - Gestionar Docente</title>
     </head>
     <body>
@@ -32,7 +33,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                         B&uacute;squeda Avanzada
                     </div>
                     <div class="card-body">
-                    <form action="?accion=busquedaAvanzada" method="post">
+                    <form action="docente.buscar.php" method="post">
                         <div class="form-group">
                             <div class="form-row">
                                 <small>Ingrese las opciones de B&uacute;squeda a continuaci&oacute;n.</small>
@@ -43,7 +44,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                                 <label for="inputExpediente">Por Docente</label>
                             </div>
                             <div class="form-row">
-                                <input type="text" class="form-control" id="inputDocente" name="inputDocente" value="">
+                                <input type="text" class="form-control" id="inputDocenteb" name="buscardocente" value="" oninput="validar('inputDocenteb')" pattern="[A-Za-z]{4,23}">
                                 <small id="inputAsignaturas" class="form-text text-muted"></small>
                             </div>
                         </div>
@@ -52,7 +53,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                                 <label for="inputDesdeIL">Por Dni</label>
                             </div>
                             <div class="form-row">
-                                <input type="text" class="form-control " id="inputFechainicio" name="inputFechainicio" value="">
+                                <input type="text" class="form-control " id="inputDnib" name="buscardni" value="" oninput="validar('inputDnib')" pattern="[0-9]{8}">
                                 <small id="inputDocentes" class="form-text text-muted"></small>
                             </div>
                         </div>
@@ -61,20 +62,14 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                                 <label for="inputDesdeIL">Por cargo</label>
                             </div>
                             <div class="form-row">
-                                <input type="text" class="form-control " id="inputFechainicio" name="inputFechainicio" value="">
-                                <small id="inputDocentes" class="form-text text-muted"></small>
+                               <select  class="form-control " name="buscarcargo" >
+                               <option>Ingrese Cargo </option>
+                               <option value="Titular">Titular</option>
+                               <option value="Asociado">Asociado</option>
+                               <option value="Adjunto">Adjunto</option>
+                          </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <label for="inputDesdeIL">Por Departamento</label>
-                            </div>
-                            <div class="form-row">
-                                <input type="text" class="form-control " id="inputfechafinalizacion" name="inputFechafinalizacion" value="">
-                                <small id="inputFecha" class="form-text text-muted"></small>
-                            </div>
-                        </div>
-
                         <br>
                         <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block btn-lg" name="Buscar">Realizar b&uacute;squeda</button>
@@ -83,7 +78,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                     <p>
                         <a href="docente.crear.php">
                         <button type="button" class="btn btn-success btn-block btn-lg">
-                            <span class="oi oi-plus"></span> Nuevo Docente
+                            <span class="oi oi-plus"></span> Agregar Docente
                         </button>
                         </a>
                     </p>
@@ -107,7 +102,6 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                               <td>Editar</td>
                               <td>Eliminar</td>
                             </tr>
-
                             <tr>
                                 <?php foreach ($ColeccionDocente->getDocentes() as $Docente)
                                         {
@@ -124,7 +118,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                                     <td><?= $Docente->getCategoria(); ?></td>
                                     <td><?= $Departamento->getNombre();?></td>
                                     <td>
-                                        <a title="Ver detalle" href="docente.ver.php?id=<?= $Docente->getId();?>&id1=<?= $Cargo->getId();?>">
+                                        <a title="Ver detalle" href="docente.ver.php?id=<?= $Docente->getId();?>&id1=<?= $Cargo->getId(); ?>&id2=<?=$Departamento->getId(); ?>">
                                             <button type="button" class="btn btn-outline-info">
                                                 <span class="oi oi-zoom-in"></span>
                                             </button></a>

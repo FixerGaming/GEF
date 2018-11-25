@@ -19,7 +19,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../app/gestionExamen.php">
+                <a class="nav-link" href="../app/inicio.php">
                     <span class="oi oi-spreadsheet" />
                     Gestionar mesa de examen
                 </a>
@@ -35,23 +35,29 @@
                     <span class="oi oi-person" />
                     Gestionar Novedades
                 </a>
+            </li>    
+            <li class="nav-item">
+                <a class="nav-link" href="../app/gestionarAfectacion.php">
+                    <span class="oi oi-person" />
+                    Gestionar Afectaciones
+                </a>
             </li>          
-            <!--<?php if (ControlAcceso::verificaPermiso(PermisosSistema::PERMISO_ROLES)) { ?>
+            <?php if (ControlAcceso::verificaPermiso(PermisosSistema::PERMISO_ROLES)) { ?>
                 <li class = "nav-item">
                     <a class = "nav-link" href = "../app/roles.php">
                         <span class = "oi oi-graph" />
                         Roles
                     </a>
-                </li>-->
+                </li>
             <?php } ?>
 
-            <!--<?php if (ControlAcceso::verificaPermiso(PermisosSistema::PERMISO_PERMISOS)) { ?>
+            <?php if (ControlAcceso::verificaPermiso(PermisosSistema::PERMISO_PERMISOS)) { ?>
                 <li class="nav-item">
                     <a class="nav-link" href="../app/permisos.php">
                         <span class="oi oi-lock-locked" />
                         Permisos
                     </a>
-                </li>-->
+                </li>
                 <?php } ?>
 
                 <li class="nav-item">

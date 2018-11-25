@@ -23,4 +23,14 @@ class ColeccionLicencia extends BDColeccionGenerica{
     function getLicencias() {
         return $this->licencias;
     }
+    /**
+    *
+    * @return array()
+    */
+    function getLicenciaspordocentes($nombre){
+       return $this->licencias;
+    }
+
+
+
 }

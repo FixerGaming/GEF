@@ -6,7 +6,7 @@ $DatosFormulario = $_POST;
 $idProfesor = $DatosFormulario["id"];
 $idCargo = $DatosFormulario["id1"];
 
-$query = "UPDATE profesor SET dni = '{$DatosFormulario["dni"]}',nombre = '{$DatosFormulario["nombre"]}', apellido = '{$DatosFormulario["apellido"]}', email = '{$DatosFormulario["email"]}', categoria = '{$DatosFormulario["categoria"]}' WHERE id = {$idProfesor}";
+$query = "UPDATE profesor SET dni = '{$DatosFormulario["dni"]}',nombre = '{$DatosFormulario["nombre"]}', apellido = '{$DatosFormulario["apellido"]}', email = '{$DatosFormulario["email"]}', categoria = '{$DatosFormulario["categoria"]}',idDepartamento = '{$DatosFormulario["departamento"]}' WHERE id = {$idProfesor}";
 $consulta = BDConexion::getInstancia()->query($query);
 $query2 = "UPDATE cargo SET tipoDedicacion = '{$DatosFormulario["dedicacion"]}',tipoCargo = '{$DatosFormulario["cargo"]}' WHERE idProfesorcarg = {$idProfesor}";
 $consulta2 = BDConexion::getInstancia()->query($query2);

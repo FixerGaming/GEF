@@ -66,7 +66,7 @@
         <td>Ver mas</td>
       </tr>
       <?php
-      $profesortabla="SELECT PROFESOR.id,PROFESOR.dni,PROFESOR.apellido,PROFESOR.nombre,PROFESOR.email,PROFESOR.categoria,CARGO.id,CARGO.tipoCargo,CARGO.tipoDedicacion
+      $profesortabla="SELECT PROFESOR.id,PROFESOR.dni,PROFESOR.apellido,PROFESOR.nombre,PROFESOR.email,PROFESOR.categoria,CARGO.id,CARGO.tipoCargo,CARGO.tipoDedicacion,Cargo.departamento
       FROM PROFESOR INNER JOIN CARGO ON PROFESOR.id = CARGO.idProfesorcarg ";
       $profesores=BDConexion::getInstancia()->query($profesortabla);
 
@@ -78,7 +78,8 @@
                 $ver[4]."||".
                 $ver[5]."||".
                 $ver[6]."||".
-                $ver[7]."||";
+                $ver[7]."||".
+                $ver[8];
          ?>
       <tr>
         <td><?php echo $ver [3] ?></td>
@@ -87,16 +88,19 @@
         <td><?php echo $ver [4] ?></td>
         <td><?php echo $ver [7] ?></td>
         <td><?php echo $ver [5] ?></td>
+        <td><?php echo $ver [8] ?></td>
         <td>
 
           <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>)">
               <span class="oi oi-pencil"></span>
           </button>
-        
+        </td>
+        <td>
           <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" onclick="PreguntarSiNO()">
              <span class="oi oi-trash"></span>
           </button>
-        
+        </td>
+        <td>
           <button class="btn btn-outline-primary" class="btn btn-outline-info">
              <span class="oi oi-zoom-in"></span>
           </button>

@@ -3,15 +3,36 @@ include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/BDConexion.Class.php';
 include_once '../modelo/ColeccionLicencia.php';
+include_once '../modelo/ColeccionDocentes.php';
 
 $DatosFormulario = $_POST;
+$fechainicio=strrev($DatosFormulario["fechainicio"]);
+$fechafinal=strrev($DatosFormulario["fechainicio"]);
 
 
-$query = "INSERT INTO Licencia VALUES (null,'{$DatosFormulario["fechainicio"]}','{$DatosFormulario["fechafinal"]}','{$DatosFormulario["selectDocente"]}')";
+$fecha = new DateTime($DatosFormulario["fechainicio"]);
+$fecha_d_m_y1 = $fecha->format('Y/m/d');
+$fecha = new DateTime($DatosFormulario["fechafinal"]);
+$fecha_d_m_y2 = $fecha->format('Y/m/d');
+
+
+$query = "SELECT id FROM profesor where nombre = '{$DatosFormulario["buscarprofesor"]}'";
+ $result = BDConexion::getInstancia()->query($query);
+while($row = $result->fetch_array())
+    {
+       $id1=$row["id"];
+    }
+
+//DATE_FORMAT('$fechainicio','%Y-%m-%d')
+
+
+
+
+$query = "INSERT INTO Licencia VALUES (null,'$fecha_d_m_y1','$fecha_d_m_y2','".$id1."')";
 $consulta = BDConexion::getInstancia()->query($query);
 $ColeccionLicencias = new ColeccionLicencia();
 foreach ($ColeccionLicencias->getLicencias() as $Licencia) {
-  if ($DatosFormulario ["selectDocente"] == $Licencia->getIdProfesor())
+  if ($id1 == $Licencia->getIdProfesor())
   {
     $id=$Licencia->getId();
   }
@@ -36,7 +57,6 @@ if (!$consulta && !$consulta2) {
     </head>
     <body>
         <?php include_once '../gui/navbar.php'; ?>
-       <?php echo $id ?>
         <div class="container">
             <p></p>
             <div class="card">

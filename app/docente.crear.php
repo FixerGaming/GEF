@@ -12,6 +12,7 @@ $ColeccionDepartamento = new ColeccionDepartamento();
         <link rel="stylesheet" href="../lib/open-iconic-master/font/css/open-iconic-bootstrap.css" />
         <script type="text/javascript" src="../lib/JQuery/jquery-3.3.1.js"></script>
         <script type="text/javascript" src="../lib/bootstrap-4.1.1-dist/js/bootstrap.min.js"></script>
+         <script type="text/javascript" src="../lib/validar.js"></script>
         <title><?= Constantes::NOMBRE_SISTEMA; ?> - Crear Docente</title>
     </head>
     <body>
@@ -30,24 +31,24 @@ $ColeccionDepartamento = new ColeccionDepartamento();
                     <div class="card-body">
                         <h4>Datos del docente</h4>
                         <div class="form-group">
-                            <label for="inputNombre">Nombre</label>
-                            <input type="text" name="nombre" class="form-control" id="inputNombre" placeholder="Ingrese el nombre del Docente" required="">
+                            <label for="inputNombree">Nombre</label>
+                            <input type="text" name="nombre" class="form-control" id="inputNombre" placeholder="Ingrese el nombre del Docente"oninput="validar('inputNombre')" required="" pattern="[A-Za-z]{4,23}">
                         </div>
                         <div class="form-group">
-                            <label for="inputApellido">Apellido</label>
-                            <input type="text" name="apellido" class="form-control" id="inputApellido"  placeholder="Ingrese el apellido del Docente" required="">
+                            <label for="inputApellidoo">Apellido</label>
+                            <input type="text" name="apellido" class="form-control" id="inputApellido"  placeholder="Ingrese el apellido del Docente" oninput="validar('inputApellido')" required="" pattern="[A-Za-z]{4,23}">
                         </div>
                         <div class="form-group">
                             <label for="inputDni">Dni</label>
-                            <input type="text" name="dni" class="form-control" id="inputDni"  placeholder="Ingrese el dni del Docente" required="">
+                            <input type="text" name="dni" class="form-control" id="inputDni"  placeholder="Ingrese el dni del Docente" oninput="validar('inputDni')" required="" pattern="[0-9]{8}">
                         </div>
                         <div class="form-group">
                             <label for="inputEmail">Email</label>
-                            <input type="email" name="email" class="form-control" id="inputEmail"  placeholder="Ingrese el email del Docente" required="">
+                            <input type="email" name="email" class="form-control" id="inputEmail"  placeholder="Ingrese el email del Docente" required="" oninput="validar('inputEmail')" >
                         </div>
                         <div class="form-group">
                             <label for="inputCategoria">Categoria</label>
-                            <input type="text" name="categoria" class="form-control" id="inputCategoria" placeholder="Ingrese la categoria del Docente" required="">
+                            <input type="text" name="categoria" class="form-control" id="inputCategoria" placeholder="Ingrese la categoria del Docente" oninput="validar('inputCategoria')" required="" pattern="[A-Za-z]{4,45}">
                         </div>
                         <div class "form-group">
                             <label for="Cargon">Cargo</label>

@@ -20,7 +20,10 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
       <script type="text/javascript" src="../lib/JQuery/jquery-3.3.1.js"></script>
       <script type="text/javascript" src="../lib/bootstrap-4.1.1-dist/js/bootstrap.min.js"></script>
       <script type="text/javascript" src="../lib/alertifyjs/alertify.min.js"></script>
+      <script src="../lib/validar.js"></script>
     <script type="text/javascript" src="../lib/alertifyjs/alertify.js"></script>
+    <style>
+    </style>
         <title><?= Constantes::NOMBRE_SISTEMA; ?> - Gestionar Novedad</title>
     </head>
     <body>
@@ -34,7 +37,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                         B&uacute;squeda Avanzada
                     </div>
                     <div class="card-body">
-                    <form action="?accion=busquedaAvanzada" method="post">
+                    <form action="novedadesbuscar.php" method="post">
                         <div class="form-group">
                             <div class="form-row">
                                 <small>Ingrese las opciones de B&uacute;squeda a continuaci&oacute;n.</small>
@@ -45,7 +48,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                                 <label for="inputExpediente">Por Docente</label>
                             </div>
                             <div class="form-row">
-                                <input type="text" class="form-control" id="inputDocente" name="inputDocente" value="">
+                                <input type="text" class="form-control" name="docenteb" id="inputDocente" oninput="validar('inputDocente')" name="inputDocente" value=""pattern="[A-Z]{4-23}">
                                 <small id="inputAsignaturas" class="form-text text-muted"></small>
                             </div>
                         </div>
@@ -54,7 +57,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                                 <label for="inputDesdeIL">Por Fecha de Inicio</label>
                             </div>
                             <div class="form-row">
-                                <input type="text" class="form-control " id="inputFechainicio" name="inputFechainicio" value="">
+                                <input type="date" class="form-control " name="fechainiciob" id="inputFechainicio" oninput="validar('inputFechainicio')" name="inputFechainicio" value="" pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}" title="Ingrese formato de fecha dd/mm/yyyy">
                                 <small id="inputDocentes" class="form-text text-muted"></small>
                             </div>
                         </div>
@@ -63,7 +66,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                                 <label for="inputDesdeIL">Por Fecha de finalizacion</label>
                             </div>
                             <div class="form-row">
-                                <input type="text" class="form-control " id="inputfechafinalizacion" name="inputFechafinalizacion" value="">
+                                <input type="date" class="form-control " name="fechafinalb" id="inputfechafinalizacion"oninput="validar('inputfechafinalizacion')" name="inputFechafinalizacion" value="" pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}" title="Ingrese formato de fecha dd/mm/yyyy">
                                 <small id="inputFecha" class="form-text text-muted"></small>
                             </div>
                         </div>
@@ -72,11 +75,13 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                         <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block btn-lg" name="Buscar">Realizar b&uacute;squeda</button>
                         </div>
+                        <p id = "mensajeError">
+                        </p>
                     </form>
                     <p>
                         <a href="novedad.crear.php">
                         <button type="button" class="btn btn-success btn-block btn-lg">
-                            <span class="oi oi-plus"></span> Nueva Novedad
+                            <span class="oi oi-plus"></span> Agregar Novedad
                         </button>
                         </a>
                     </p>
@@ -119,42 +124,49 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                                 if ($datetime2 < $datetime)
                                 {
                                   $Color="#9c9c9c";
-                                  echo "es mas chico";
+
                                 }
                                 else
                                 {
                                   $Color="#ffffff";
-                                  echo "es mas grande";
-                                }
 
+
+                                }
+                                $fecha = new DateTime($Licencia->getFechaInicio());
+                                $fecha_d_m_y1 = $fecha->format('d-m-Y');
+                                $fecha = new DateTime($Licencia->getFechaFinal());
+                                $fecha_d_m_y2 = $fecha->format('d-m-Y');
 
 
                          ?>
-                         <td style="background-color: <?php echo $Color;?>"><?= $Docente->getNombre(); ?></td>
-                         <td style="background-color:".$Color."" ><?= $Docente->getApellido(); ?></td>
-                         <td style="background-color:".$Color."" ><?= $Departamento->getNombre(); ?></td>
-                         <td style="background-color:".$Color.""  width="700"><?= $Licencia->getFechaInicio(),"/",$Licencia->getFechaFinal();?></td>
-                         <td style="background-color:".$Color."" ><?= $TipoLicencia->getNombre();?></td>
-                         <td style="background-color:".$Color."" >
-                             <a title="Ver detalle" href="novedad.ver.php?id=<?= $Licencia->getId();?>&id1=<?= $TipoLicencia->getId();?>">
+                         <td style="background-color:<?php echo $Color;?>" ><?= $Docente->getNombre(); ?></td>
+                         <td style="background-color:<?php echo $Color;?>" ><?= $Docente->getApellido(); ?></td>
+                         <td style="background-color:<?php echo $Color;?>" ><?= $Departamento->getNombre(); ?></td>
+                         <td style="background-color:<?php echo $Color;?>"  width="700"><?= $fecha_d_m_y1,"/",$fecha_d_m_y2?></td>
+                         <td style="background-color:<?php echo $Color;?>" ><?= $TipoLicencia->getNombre();?></td>
+                         <td style="background-color:<?php echo $Color;?>" >
+                             <a title="Ver detalle" href="novedad.ver.php?id=<?= $Licencia->getId();?>&id1=<?= $TipoLicencia->getId();?>&id3=<?=$Docente->getId();?>">
                                  <button type="button" class="btn btn-outline-info">
                                      <span class="oi oi-zoom-in"></span>
                                  </button></a>
 
                          </td>
-                         <td style="background-color:".$Color."" >
-                             <a title="Modificar" href="novedad.modificar.php?id=<?= $Licencia->getId();?>&id1=<?= $TipoLicencia->getId();?>">
+                         <td style="background-color:<?php echo $Color;?>" >
+                             <a title="Modificar" href="novedad.modificar.php?id=<?= $Licencia->getId();?>&id1=<?= $TipoLicencia->getId();?>&id2=<?=$Docente->getId()?>">
                                  <button type="button" class="btn btn-outline-warning">
                                      <span class="oi oi-pencil"></span>
                                  </button></a>
                          </td>
-                         <td style="background-color:".$Color."">
+                         <td style="background-color:<?php echo $Color;?>">
                              <a title="Eliminar" href="novedades.eliminar.php?id=<?= $Licencia->getId(); ?>&id1=<?= $TipoLicencia->getId();?>&id2=<?=$Docente->getId();?>">
                                <button class="btn btn-outline-danger" class="btn btn-outline-info">
                                   <span class="oi oi-trash"></span>
                                </button></a>
                          </td>
                          </tr>
+
+
+
         <?php
 
                               }
@@ -170,7 +182,7 @@ $ColeccionDepartamento = new ColeccionDepartamento(); ?>
                     <ul class="pagination justify-content-center">
                     <li class = "page-item active"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=1&accion=busquedaAvanzada"> 1</a></li><li class = "page-item "><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> 2</a></li><li class = "page-item"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> &gt;</a></li>        </ul>
                     <span class="pagination justify-content-center">
-                        Mostrando 1-10 de 6384
+                        Mostrando 1-5 de 10
                     </span>
                 </div>
             </div>

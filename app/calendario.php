@@ -38,9 +38,10 @@ $ColeccionLlamado = new ColeccionLlamado();
     $Consulta="SELECT L.id AS identifica, L.tipo AS tipo, L.nombre AS nombre FROM LLAMADO L WHERE L.id LIKE '%".$Mesa."%'";
     $Consultas=BDConexion::getInstancia()->query($Consulta);
     $row = $Consultas->fetch_assoc();
-    $tipo=$row['tipo'];
-    $identifica=$row['identifica'];
-    $nombre=$row['nombre'];
+    $Llamado = new Llamado($row['identifica']);
+    $Llamado->setTipo($row['tipo']);
+    $Llamado->setId($row['identifica']);
+    $Llamado->setNombre($row['nombre']);
   
     //Si se aprieta el Boton "Calendario" se recarga la pagina y cuando llega al if si esta apretado entra, en el caso deque no lo salta y no se realiza ninguna operacion
 
@@ -67,12 +68,12 @@ $ColeccionLlamado = new ColeccionLlamado();
                         <!-- Formulario que nos permite generar el Calendario -->
                         <form action="calendarioFuncion.php" method="POST">
                             <div class="container">
-                                <h3 align="center">Mesa Elegida: <?php echo $nombre;?></h3>
+                                <h3 align="center">Mesa Elegida: <?php echo $Llamado->getNombre();?></h3>
 	                            <div class="card-body date" align="center">
                                     <!-- input que Obtiene la informacion del calendario, este input es lo que vamos a enviar en el post--> 
                                     <input type="hidden" name="fecha" class="form-control date">
                                 </div>
-                                <input type="hidden"  name="Mesa" value=<?php echo $identifica;?>>
+                                <input type="hidden"  name="Mesa" value=<?php echo $Llamado->getId();?>>
                                 <div align="center">
                                     <button  type="submit"  name="calendario" class="btn btn-outline-info">
                                         <span  class="oi oi-check"></span> GUARDAR

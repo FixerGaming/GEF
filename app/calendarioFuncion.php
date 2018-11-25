@@ -1,14 +1,16 @@
 <?php 
   include_once '../modelo/BDConexion.Class.php';
-  
+  include_once '../modelo/Llamado.Class.php';
+
     @$MesaExamen= $_POST['Mesa'];
     //Consulta a la Base de Datos para recuperar el ID, Tipo y nombre del LLAMADO
     $Consulta="SELECT L.id AS identifica, L.tipo AS tipo, L.nombre AS nombre FROM LLAMADO L WHERE L.id LIKE '%".$MesaExamen."%'";
     $Consultas=BDConexion::getInstancia()->query($Consulta);
     $row = $Consultas->fetch_assoc();
-    $tipo=$row['tipo'];
-    $identificador=$row['identifica'];
-    $nombre=$row['nombre'];
+    $Llamado = new Llamado($row['identifica']);
+    $Llamado->setTipo($row['tipo']);
+    $Llamado->setId($row['identifica']);
+    $Llamado->setNombre($row['nombre']);
   
     //Si se aprieta el Boton "Calendario" se recarga la pagina y cuando llega al if si esta apretado entra, en el caso deque no lo salta y no se realiza ninguna operacion
     if(isset($_POST['calendario'])){
@@ -23,15 +25,16 @@
         }
         array_push($fechas,$Fecha);
 
-        if($cont== 9 && $tipo == "general"){  
+        if($cont== 9 && $Llamado->getTipo() == "general"){  
             for($i=0; $i<5; $i++){
-                $INSERT="INSERT INTO FECHA (orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fechas[$i]."','".$fechas[$i + 5]."',".$identificador.")";
+                $INSERT="INSERT INTO FECHA (orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fechas[$i]."','".$fechas[$i + 5]."',".$Llamado->getId().")";
                 BDConexion::getInstancia()->query($INSERT);
         ?>
                 <div style="display:none">
                         <form action="gestionExamen.php" id="POST" method="POST">
-                            <input type="text" name="identificador" value=<?php echo $identificador;?>>
-                            <input type="text" name="tipo" value=<?php echo $tipo;?>>
+                            <input type="text" name="identificador" value=<?php echo $Llamado->getId();?>>
+                            <input type="text" name="tipo" value=<?php echo $Llamado->getTipo();?>>
+                            <input type="text" name="nombre" value=<?php echo $Llamado->getNombre();?>>
                             <input type="text" name="Buscar" value="1">
                         </form>
                     </div>
@@ -39,16 +42,17 @@
         <?php
             }
         }else{
-            if($cont > 0 && $cont <5 && $tipo!="general"){
+            if($cont > 0 && $cont <5 && $Llamado->getTipo()!="general"){
                 for($i=0; $i<=$cont; $i++){
                 $fecha1=$fechas[$i];
-                $INSERTE="INSERT INTO FECHA (orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fecha1."',NULL,".$identificador.")";
+                $INSERTE="INSERT INTO FECHA (orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fecha1."',NULL,".$Llamado->getId().")";
                 BDConexion::getInstancia()->query($INSERTE); 
         ?>
                 <div style="display:none">
                         <form action="gestionExamen.php" id="POST" method="POST">
-                            <input type="text" name="identificador" value=<?php echo $identificador;?>>
-                            <input type="text" name="tipo" value=<?php echo $tipo;?>>
+                            <input type="text" name="identificador" value=<?php echo $Llamado->getId();?>>
+                            <input type="text" name="tipo" value=<?php echo $Llamado->getTipo();?>>
+                            <input type="text" name="nombre" value=<?php echo $Llamado->getNombre();?>>
                             <input type="text" name="Buscar" value="1">
                         </form>
                     </div>
@@ -56,7 +60,6 @@
         <?php
                 }
             }
-            echo '<script type="text/javascript">alert("Error");</script>';
             
         ?>
         <?php

@@ -6,7 +6,12 @@ $DatosFormulario = $_POST;
 $idLicencia = $DatosFormulario["id"];
 $idTipoLicencia = $DatosFormulario["id1"];
 
-$query = "UPDATE Licencia SET fechaInicio = '{$DatosFormulario["fechainicio"]}',fechaFinal = '{$DatosFormulario["fechafinal"]}' WHERE id = {$idLicencia}";
+$fecha = new DateTime($DatosFormulario["fechainicio"]);
+$fecha_d_m_y1 = $fecha->format('Y/m/d');
+$fecha = new DateTime($DatosFormulario["fechafinal"]);
+$fecha_d_m_y2 = $fecha->format('Y/m/d');
+
+$query = "UPDATE Licencia SET fechaInicio = '{$fecha_d_m_y1}',fechaFinal = '{$fecha_d_m_y2}' WHERE id = {$idLicencia}";
 $consulta = BDConexion::getInstancia()->query($query);
 $query2 = "UPDATE tipo_licencia SET nombre = '{$DatosFormulario["nombre"]}',descripcion = '{$DatosFormulario["descripcion"]}' WHERE id = {$idTipoLicencia}";
 $consulta2 = BDConexion::getInstancia()->query($query2);
@@ -33,7 +38,6 @@ if (!$consulta && !$consulta2 ) {
     </head>
     <body>
         <?php include_once '../gui/navbar.php'; ?>
-
         <div class="container">
             <div class="card">
                 <div class="card-header">

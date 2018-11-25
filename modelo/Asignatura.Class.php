@@ -16,6 +16,12 @@ class Asignatura extends BDObjetoGenerico {
     function getNombre() {
         return $this->nombre;
     }
+    function getDepartamento(){
+        return $this->departamento;
+    }
+    function getProfesor(){
+        return $this->$Profesor;
+    }
 
     function setId($id) {
         $this->id = $id;
@@ -23,5 +29,11 @@ class Asignatura extends BDObjetoGenerico {
     function setNombre($nombre) {
         $this->nombre = $nombre;
     }
+    function setDepartamento($departamento){
+        $this->departamento=$departamento;
+    }
 
+    function setProfesor($Profesor){
+        $this->Profesor= $Profesor;
+    }
 }

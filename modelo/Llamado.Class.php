@@ -1,16 +1,10 @@
 <?php
 
 include_once 'BDObjetoGenerico.Class.php';
-include_once 'Examen.Class.php';
 
 class Llamado extends BDObjetoGenerico {
 
 
-    /**
-     *
-     * @var Examen[]
-     */
-    private $examen;
 
     function __construct($id = null) {
         parent::__construct($id, "LLAMADO");
@@ -25,6 +19,17 @@ class Llamado extends BDObjetoGenerico {
     function getNombre() {
         return $this->nombre;
     }
+    function getHora(){
+        return $this->hora;
+    }
+    function getFechaUnica(){
+        return $this->fechaunica;
+    }
+    function getMesas(){
+        return $this->mesas;
+    }
+
+
     function setId($id) {
         $this->id = $id;
     }
@@ -34,6 +39,13 @@ class Llamado extends BDObjetoGenerico {
     function setNombre($nombre) {
         $this->nombre = $nombre;
     }
-
-
+    function setHora($hora) {
+        $this->hora = $hora;
+    }
+    function setFechaUnica($fechaUnica) {
+        $this->fechaunica = $fechaUnica;
+    }
+    function setMesa($Mesas){
+        $this->mesas= $Mesas;
+    }
 }
