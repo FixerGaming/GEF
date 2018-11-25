@@ -3,6 +3,8 @@ include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionCarrera.php';
 $ColeccionCarrera = new ColeccionCarrera();
+include_once '../modelo/Llamado.Class.php';
+
 ?>
 
 <html>
@@ -17,6 +19,19 @@ $ColeccionCarrera = new ColeccionCarrera();
     <body>
 
         <?php include_once '../gui/navbar.php'; ?>
+    <?php 
+      @$MesaExamen= $_SESSION['llamado'];
+     //Consulta a la Base de Datos para recuperar el ID, Tipo y nombre del LLAMADO
+     $Consulta="SELECT L.id AS identifica, L.tipo AS tipo, L.nombre AS nombre FROM LLAMADO L WHERE L.id LIKE '%".$MesaExamen."%'";
+     $Consultas=BDConexion::getInstancia()->query($Consulta);
+     $row = $Consultas->fetch_assoc();
+     $Llamado = new Llamado($row['identifica']);
+     $Llamado->setTipo($row['tipo']);
+     $Llamado->setId($row['identifica']);
+     $Llamado->setNombre($row['nombre']);
+     $Nombre= $Llamado->getNombre();
+     $TIPO= $Llamado->getTipo();
+    ?>
 <div class="container-fluid "> 
     <div class="container-fluid">
         <div class="row justify-content-around">
@@ -26,11 +41,13 @@ $ColeccionCarrera = new ColeccionCarrera();
                         B&uacute;squeda Avanzada
                     </div>  
                     <div class="card-body">
-                    <form action="?accion=busquedaAvanzada" method="post">
+                    <form action="examenBuscar.php" method="post">
                         <div class="form-group">
                             <div class="form-row">
-                                <small>Ingrese las opciones de B&uacute;squeda a continuaci&oacute;n.</small>                    
+                                <small>Ingrese las opciones de B&uacute;squeda a continuaci&oacute;n.</small>    
                             </div>
+                        </div>
+                        <div class="form-group">
                             <div class="form-row">
                                 <label for="selectTipoBusqueda">Por Carrera</label>
                                 <select class="form-control" id="Carrera" name="selectCarrera">
@@ -46,9 +63,9 @@ $ColeccionCarrera = new ColeccionCarrera();
                             <div class="form-row">
                                 <label for="inputExpediente">Por Asignatura</label> 
                             </div>
-                            <div class="form-row">
-                                <input type="text" class="form-control"  name="inputAsignatura">
-                                <small  class="form-text text-muted"></small>                   
+                            <div class="form-group">
+                                <input type="text" name="buscarAsignatura" class="form-control" id ="buscarAsignatura" >
+                                <div id="listaAsignatura"></div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -65,6 +82,8 @@ $ColeccionCarrera = new ColeccionCarrera();
                         <button type="submit" class="btn btn-primary btn-block btn-lg" name="Buscar">Realizar b&uacute;squeda</button>
                         </div>
                     </form>
+
+
                     <p>
                         <a href="examen.crear.php">
                         <button type="button" class="btn btn-success btn-block btn-lg">
@@ -84,18 +103,12 @@ $ColeccionCarrera = new ColeccionCarrera();
             <div class="col-md-9">
             <?php 
                 $AUX="";
-                @$TIPO=$_POST['tipo'];
-                @$ID=$_POST['identificador'];
-                @$Nombre=$_POST['nombre'];
                 @$Carrera=$_POST['selectCarrera'];
                 @$Asignatura=$_POST['inputAsignatura'];
                 @$Docente=$_POST['inputDocente'];
-              
-                echo $Nombre;
-                        
-            if(isset($_POST['Buscar'])){ 
-                if(!empty($ID)){
-                    @$AUX= "AND L.id = '".$ID."'";
+                
+                if(!empty($MesaExamen)){
+                    $AUX= "AND L.id = '".$MesaExamen."'";
                 }
                 if(empty($Asignatura)){
                     if(empty($Docente)){
@@ -112,7 +125,7 @@ $ColeccionCarrera = new ColeccionCarrera();
                 }
                 
                 
-                $reporte="SELECT C.id AS id,LM.idLlamado AS idLlamado, LM.idMesa AS idMesa, C.nombre AS Carrera, A.nombre AS Asignatura,A.id AS Asignaturaid,T.id AS tribunal, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
+                $reporte="SELECT C.id AS id,LM.idLlamado AS idLlamado, LM.idMesa AS idMesa, C.nombre AS Carrera, A.nombre AS Asignatura,A.id AS Asignaturaid,T.id AS tribunal, P.nombre AS presidente, P1.nombre AS vocal, LM.fechaUnica AS fechaUnica, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
                 FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
                 INNER JOIN PROFESOR P ON T.presidente = P.id
                 LEFT JOIN PROFESOR P1 ON  T.vocal = P1.id
@@ -142,7 +155,7 @@ $ColeccionCarrera = new ColeccionCarrera();
                         <input type="hidden" name="id" value=<?php echo $Carrera;?>>
                         <input type="hidden" name="asignatura" value=<?php echo $Asignatura;?>>
                         <input type="hidden" name="Docente" value=<?php echo $Docente;?>>
-                        <input type="hidden" name="id2" value=<?php echo $ID;?>>
+                        <input type="hidden" name="id2" value=<?php echo $MesaExamen;?>>
                         <input type="hidden" name="Tipo" value=<?php echo $TIPO;?>>
                         <button class="btn btn-outline-warning">GENERAR PDF</button>
                         </form>
@@ -161,11 +174,13 @@ $ColeccionCarrera = new ColeccionCarrera();
                                 <td>1Llamado</td>
                             <?php if(empty(@$TIPO) || @$TIPO == "general"){?>
                                 <td>2Llamado</td>
+                                <td>fechaUnica</td>
                                 <td>Hora</td>
                                 <td>Ver Mas</td>
                                 <td>Modificar</td>
                                 <td>Eliminar</td>
                             <?php }else { ?>
+                                <td>fechaUnica</td>
                                 <td>Hora</td>
                                 <td>Ver Mas</td>
                                 <td>Modificar</td>
@@ -190,6 +205,7 @@ $ColeccionCarrera = new ColeccionCarrera();
                             $idLlamado=$row['idLlamado'];
                             $idMesa=$row['idMesa'];
                             $idasignatura=$row['Asignaturaid'];
+                            $fechaUnica=$row['fechaUnica'];
                             if(empty(@$TIPO) || @$TIPO == "general"){
                                 $fecha2= $row['fecha2'];
                                 echo
@@ -203,6 +219,7 @@ $ColeccionCarrera = new ColeccionCarrera();
                                 <td>'.$suplente.'</td>
                                 <td>'.$fecha1.'</td>
                                 <td>'.$fecha2.'</td>
+                                <td>'.$fechaUnica.'</td>
                                 <td>'.$hora.'</td>
                                 <td align="center">
                                 <button class="btn btn-outline-primary" class="btn btn-outline-info">
@@ -234,6 +251,7 @@ $ColeccionCarrera = new ColeccionCarrera();
                                 <td>'.$vocal1.'</td>
                                 <td>'.$suplente.'</td>
                                 <td>'.$fecha1.'</td>
+                                <td>'.$fechaUnica.'</td>
                                 <td>'.$hora.'</td>
                                 <td align="center">
                                     <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
@@ -255,8 +273,7 @@ $ColeccionCarrera = new ColeccionCarrera();
                         }  
                     ?>
                     </table>            
-                </div> 
-            <?php } ?>           
+                </div>         
             </div>
         </div>    
         <br>
@@ -266,4 +283,29 @@ $ColeccionCarrera = new ColeccionCarrera();
         <?php include_once '../gui/footer.php'; ?>
     </body>
 </html>
+<script>
+    $(document).ready(function(){
+        $('#buscarAsignatura').keyup(function(){
+            var query=$(this).val();
+            if(query !='')
+            {
+                $.ajax({
+                    url:"buscarAsignatura.php",
+                    method:"POST",
+                    data:{query:query},
+                    success:function(data)
+                    {
 
+                        $('#listaAsignatura').fadeIn();
+                        $('#listaAsignatura').html(data);
+                    }
+
+                });
+            }
+            });
+         $(document).on('click', 'li', function(){  
+           $('#buscarAsignatura').val($(this).text());  
+           $('#listaAsignatura').fadeOut();  
+           }); 
+        });
+</script>

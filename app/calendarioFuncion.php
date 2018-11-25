@@ -12,6 +12,12 @@
     $Llamado->setId($row['identifica']);
     $Llamado->setNombre($row['nombre']);
   
+    //Utilizacion de sessiones para mandar el id del llamado seleccionado
+    session_start();
+    $_SESSION['llamado']=$Llamado->getId();
+    header("Location:examenBuscar.php");
+    header("Location:gestionExamen.php");
+
     //Si se aprieta el Boton "Calendario" se recarga la pagina y cuando llega al if si esta apretado entra, en el caso deque no lo salta y no se realiza ninguna operacion
     if(isset($_POST['calendario'])){
         $cont=0;
@@ -30,15 +36,6 @@
                 $INSERT="INSERT INTO FECHA (orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fechas[$i]."','".$fechas[$i + 5]."',".$Llamado->getId().")";
                 BDConexion::getInstancia()->query($INSERT);
         ?>
-                <div style="display:none">
-                        <form action="gestionExamen.php" id="POST" method="POST">
-                            <input type="text" name="identificador" value=<?php echo $Llamado->getId();?>>
-                            <input type="text" name="tipo" value=<?php echo $Llamado->getTipo();?>>
-                            <input type="text" name="nombre" value=<?php echo $Llamado->getNombre();?>>
-                            <input type="text" name="Buscar" value="1">
-                        </form>
-                    </div>
-                <script >document.getElementById("POST").submit();</script>
         <?php
             }
         }else{
@@ -48,15 +45,6 @@
                 $INSERTE="INSERT INTO FECHA (orden, fecha1, fecha2, LLAMADO_id) VALUES(".($i+1).",'".$fecha1."',NULL,".$Llamado->getId().")";
                 BDConexion::getInstancia()->query($INSERTE); 
         ?>
-                <div style="display:none">
-                        <form action="gestionExamen.php" id="POST" method="POST">
-                            <input type="text" name="identificador" value=<?php echo $Llamado->getId();?>>
-                            <input type="text" name="tipo" value=<?php echo $Llamado->getTipo();?>>
-                            <input type="text" name="nombre" value=<?php echo $Llamado->getNombre();?>>
-                            <input type="text" name="Buscar" value="1">
-                        </form>
-                    </div>
-                <script >document.getElementById("POST").submit();</script>
         <?php
                 }
             }

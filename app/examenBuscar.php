@@ -3,6 +3,7 @@ include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionCarrera.php';
 $ColeccionCarrera = new ColeccionCarrera();
+include_once '../modelo/Llamado.Class.php';
 
  ?>
 <html>
@@ -22,209 +23,303 @@ $ColeccionCarrera = new ColeccionCarrera();
     </head>
     <body>
         <?php include_once '../gui/navbar.php'; ?>
-<div class="container-fluid">
-    <div class="container">
+        <div class="container-fluid "> 
+    <div class="container-fluid">
         <div class="row justify-content-around">
           <div class=" col-sm-3">
                 <div class="card">
                     <div class="card-header alert-info">
                         B&uacute;squeda Avanzada
-                    </div>
+                    </div>  
                     <div class="card-body">
-                    <form action="novedadesbuscar.php" method="post">
+                    <form action="examenBuscar.php" method="post">
                         <div class="form-group">
                             <div class="form-row">
-                                <small>Ingrese las opciones de B&uacute;squeda a continuaci&oacute;n.</small>
+                                <small>Ingrese las opciones de B&uacute;squeda a continuaci&oacute;n.</small>                    
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="form-row">
-                                <label for="inputExpediente">Por Carrera</label>
-                                <div class="form-group">
-                                    <input type="text" name="buscarCarrera" class="form-control" id ="buscarCarrera" >
-                                <div id="listaCarrera"></div>
-                            </div>
-                            <div class="form-row">
-                                <input type="text" class="form-control" id="inputDocente" name="inputDocente" value="">
-                                <small id="inputAsignaturas" class="form-text text-muted"></small>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <label for="inputDesdeIL">Por Fecha de Inicio</label>
-                            </div>
-                            <div class="form-row">
-                                <input type="text" class="form-control " id="inputFechainicio" name="inputFechainicio" value="">
-                                <small id="inputDocentes" class="form-text text-muted"></small>
+                                <label for="selectTipoBusqueda">Por Carrera</label>
+                                <select class="form-control" id="Carrera" name="selectCarrera">
+                                <option>Seleccione una Carrera</option>
+                                <?php foreach ($ColeccionCarrera->getCarrera() as $Carrera) {
+                                    echo '<option value="'.$Carrera->getId().'">'.$Carrera->getNombre().'</option>';
+                                }  
+                                ?>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="form-row">
-                                <label for="inputDesdeIL">Por Fecha de finalizacion</label>
+                                <label for="inputExpediente">Por Asignatura</label> 
                             </div>
-                            <div class="form-row">
-                                <input type="text" class="form-control " id="inputfechafinalizacion" name="inputFechafinalizacion" value="">
-                                <small id="inputFecha" class="form-text text-muted"></small>
+                            <div class="form-group">
+                                <input type="text" name="buscarAsignatura" class="form-control" id ="buscarAsignatura" >
+                                <div id="listaAsignatura"></div>
                             </div>
                         </div>
-
-
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label for="inputDesdeIL">Por Docente</label>                                    
+                            </div>
+                            <div class="form-row">
+                                <input type="text" class="form-control " id="inputDocente" name="inputDocente" value="">
+                                <small id="inputDocentes" class="form-text text-muted"></small>                   
+                            </div>
+                        </div>                                  
+                        <br>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                        <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block btn-lg" name="Buscar">Realizar b&uacute;squeda</button>
+                        </div>
                     </form>
+
+
                     <p>
-                        <a href="novedad.crear.php">
+                        <a href="examen.crear.php">
                         <button type="button" class="btn btn-success btn-block btn-lg">
-                            <span class="oi oi-plus"></span> Agregar Novedad
+                            <span class="oi oi-plus"></span> Nuevo Examen
                         </button>
                         </a>
                     </p>
                     <p>
-                        <a href="Novedades.php">
+                        <a href="gestionExamen.php">
                         <button type="button" class="btn btn-danger btn-block btn-lg">
                             <span class="oi oi-x"></span> Cancelar
                         </button>
                         </a>
                     </p>
+                        <form action="../csv/reporte.php" method="POST">
+                            <button tyoe="submit"  name="reporte"  class="btn btn-outline-primary">GENERAR CSV 1</button>
+                            <br>
+                            <br>
+                            <button  type="submit" name="reporte1" class="btn btn-outline-primary">GENERAR CSV 2</button>
+                        </form>
                     </div>
                 </div>
             </div>
+            <div class="col-md-9">
+            <?php 
+                 @$MesaExamen= $_SESSION['llamado'];
+                 //Consulta a la Base de Datos para recuperar el ID, Tipo y nombre del LLAMADO
+                 $Consulta="SELECT L.id AS identifica, L.tipo AS tipo, L.nombre AS nombre FROM LLAMADO L WHERE L.id LIKE '%".$MesaExamen."%'";
+                 $Consultas=BDConexion::getInstancia()->query($Consulta);
+                 $row = $Consultas->fetch_assoc();
+                 $Llamado = new Llamado($row['identifica']);
+                 $Llamado->setTipo($row['tipo']);
+                 $Llamado->setId($row['identifica']);
+                 $Llamado->setNombre($row['nombre']);
+                 $Nombre= $Llamado->getNombre();
+                 $TIPO=$Llamado->getTipo();
 
-<?php
-//Se reciben los datos del post
-$nombredocente = $_POST["docenteb"];
-$fechainicial = $_POST["fechainiciob"];
-$fechafinal = $_POST["fechafinalb"];
-//se cambian el formato de las fechas buscadas
-$fecha = new DateTime($fechainicial);
-$fecha_d_m_y1 = $fecha->format('Y/m/d');
-$fecha = new DateTime($fechafinal);
-$fecha_d_m_y2 = $fecha->format('Y/m/d');
-//
-if(empty($nombredocente))
-{
-    if(empty($fecha_d_m_y1))
-    {
-        if(empty($fecha_d_m_y2))
-        {
-            $WHERE = "";
-        }else
-        {
+                $DatosFormulario = $_POST;
+                $query = "SELECT nombre FROM asignatura where nombre ='{$DatosFormulario["buscarAsignatura"]}'";
+                $result = BDConexion::getInstancia()->query($query);
+               $row = $result->fetch_array();
+                 $Asignatura=$row["nombre"];   
+                $AUX="";
+                @$Carrera=$_POST['selectCarrera'];
+                @$Docente=$_POST['inputDocente'];
+                                      
+            if(isset($_POST['Buscar'])){ 
+                if(!empty($MesaExamen)){
+                    @$AUX= "AND L.id = '".$MesaExamen."'";
+                }
+                if(empty($Asignatura)){
+                    if(empty($Docente)){
+                        if(empty($Carrera)){
+                            $WHERE = "";
+                        }else{
+                        $WHERE= "AND C.id = '".$Carrera."'";
+                        }
+                    }else{
+                    $WHERE= "AND P.nombre = '".$Docente."'";
+                    }
+                }else{
+                $WHERE= "AND A.nombre = '".$Asignatura."'";
+                }
+                
+                
+                $reporte="SELECT C.id AS id,LM.idLlamado AS idLlamado, LM.idMesa AS idMesa, C.nombre AS Carrera, A.nombre AS Asignatura,A.id AS Asignaturaid,T.id AS tribunal, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
+                FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
+                INNER JOIN PROFESOR P ON T.presidente = P.id
+                LEFT JOIN PROFESOR P1 ON  T.vocal = P1.id
+                LEFT JOIN PROFESOR P2 ON  T.vocal1 = P2.id
+                LEFT JOIN PROFESOR P3 ON T.suplente=P3.id
+                INNER JOIN ASIGNATURA A ON A.id= M.codAsignatura
+                INNER JOIN MESA_EXAMEN_CARRERA MC ON MC.codMesa=M.id
+                INNER JOIN CARRERA C ON MC.codCarrera=C.id
+                INNER JOIN  LLAMADO_MESA_EXAMEN LM ON LM.idMesa= M.id
+                INNER JOIN LLAMADO L ON L.id = LM.idLlamado
+                INNER JOIN FECHA F ON F.LLAMADO_id= L.id
+                WHERE  M.orden= F.orden 
+                $AUX 
+                $WHERE";
 
-        $WHERE= "L.fechaFinal = '".$fecha_d_m_y2."'";
-        }
-    }else
-    {
-
-    $WHERE= "L.fechaInicio = '".$fecha_d_m_y1."'";
-    }
-}else
-{
-$WHERE= "P.nombre = '".$nombredocente."'";
-}
-
-$reporte ="SELECT P.nombre, P.apellido,P.id,D.nombre AS departamento,L.fechaInicio,L.fechaFinal,L.id AS Licenciaid,t.id AS idtipo,T.nombre AS Tipo,T.descripcion FROM profesor P INNER JOIN departamento D
-ON P.idDepartamento=D.id INNER JOIN licencia L
-ON L.idProfesor = P.id INNER JOIN tipo_licencia T
-ON T.idLicencia=L.id WHERE $WHERE ";
-
-
-                $reportebuscar= BDConexion::getInstancia()->query($reporte);
- ?>
-
-
-            <div class="col-md-9 ml-md-auto">
+                $reporteCsv= BDConexion::getInstancia()->query($reporte);
+                
+            ?>    
                 <div class="card">
                    <div class="card-header alert-success">
-                   <span class="card-title">Listado de Novedades</span>
+                   <span class="card-title">Listado de Examenes</span>
                     </div>
                     <div class="card-body">
-                        <table class ="table table-hover table-condensed table-bordered">
+                        <div>
+                        <form action="../pdf/" method="POST">
+                        <input type="hidden" name="id" value=<?php echo $Carrera;?>>
+                        <input type="hidden" name="asignatura" value=<?php echo $Asignatura;?>>
+                        <input type="hidden" name="Docente" value=<?php echo $Docente;?>>
+                        <input type="hidden" name="id2" value=<?php echo $Nombre;?>>
+                        <input type="hidden" name="Tipo" value=<?php echo $Llamado->getTipo();?>>
+                        <button class="btn btn-outline-warning">GENERAR PDF</button>
+                        </form>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
                             <tr scope="row">
-                                <td>Nombre</td>
-                                <td>Apellido</td>
-                                <td>Departamento</td>
-                                <td width="700">Dias</td>
-                                <td>Regimen</td>
+                                <td>Cod</td>
+                                <td>Carrera</td>
+                                <td>Asignatura</td>
+                                <td>Presidente</td>
+                                <td>Vocal1</td>
+                                <td>Vocal2</td>
+                                <td>Suplente</td>
+                                <td>1Llamado</td>
+                            <?php if(empty(@$TIPO) || @$TIPO == "general"){?>
+                                <td>2Llamado</td>
+                                <td>Hora</td>
                                 <td>Ver Mas</td>
-                                <td>Editar</td>
+                                <td>Modificar</td>
                                 <td>Eliminar</td>
+                            <?php }else { ?>
+                                <td>Hora</td>
+                                <td>Ver Mas</td>
+                                <td>Modificar</td>
+                                <td>Eliminar</td>
+                                
+                                <?php } ?>
                             </tr>
-
-                    <tr>
-                      <?php   while($row = $reportebuscar->fetch_assoc())
-                       {
-                         $datetime = date_create(date("d-m-Y"));
-                         $Color="";
-                         $datetimecomparable=$row['fechaFinal'];
-                         $datetime2=date_create_from_format('Y-m-d', $datetimecomparable);
-                                if ($datetime2 < $datetime)
-                                {
-                                  $Color="#9c9c9c";
-
-                                }
-                                else
-                                {
-                                  $Color="#ffffff";
-
-
-                                }
-
-                        $nombreprofesor=  $row['nombre'];
-                        $apellidoprofesor=  $row ['apellido'];
-                        $nombredepartamento = $row ['departamento'];
-                        $tipo=$row ['Tipo'];
-                        $Licenciaid=$row ['Licenciaid'];
-                        $idprofesor=$row ['id'];
-                        $idtipolicenciaa=$row ['idtipo'];
-                        $fecha1 = new DateTime($row["fechaInicio"]);
-                        $fecha_d_m_y1 = $fecha1->format('d-m-Y');
-                        $fecha2 = new DateTime($row["fechaFinal"]);
-                        $fecha_d_m_y2 = $fecha2->format('d-m-Y');
-
-                         echo '
-                         <td style="background-color:'. $Color.'" >'.$nombreprofesor.'</td>
-                         <td style="background-color:'. $Color.'" >'.$apellidoprofesor.'</td>
-                         <td style="background-color:'. $Color.'" >'.$nombredepartamento.'</td>
-                         <td style="background-color:'. $Color.'"  width="700">'.$fecha_d_m_y1.'/'.$fecha_d_m_y2.'</td>
-                         <td style="background-color:'. $Color.'" >'.$tipo.'</td>
-                         <td style="background-color:'. $Color.'" >
-                             <a title="Ver detalle" href="novedad.ver.php?id='.$Licenciaid.'&id1='.$idtipolicenciaa.'">
-                                 <button type="button" class="btn btn-outline-info">
-                                     <span class="oi oi-zoom-in"></span>
-                                 </button></a>
-
-                         </td>
-                         <td style="background-color:'. $Color.'" >
-                             <a title="Modificar" href="novedad.modificar.php?id='.$Licenciaid.'&id1='.$idtipolicenciaa.'">
-                                 <button type="button" class="btn btn-outline-warning">
-                                     <span class="oi oi-pencil"></span>
-                                 </button></a>
-                         </td>
-                         <td style="background-color:'. $Color.'">
-                             <a title="Eliminar" href="novedades.eliminar.php?id='.$Licenciaid.'&id1='.$idtipolicenciaa.'&id2='.$idprofesor.'">
-                               <button class="btn btn-outline-danger" class="btn btn-outline-info">
-                                  <span class="oi oi-trash"></span>
-                               </button></a>
-                         </td>
-                         </tr>';
-                        } ?>
-                    </table>
-                  </div>
-              </div>
-                <div class="card-footer">
-                    <ul class="pagination justify-content-center">
-                    <li class = "page-item active"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=1&accion=busquedaAvanzada"> 1</a></li><li class = "page-item "><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> 2</a></li><li class = "page-item"><a class = "page-link" href = "/apps/digesto2018/vista/index.php?pagina=2&accion=busquedaAvanzada"> &gt;</a></li>        </ul>
-                    <span class="pagination justify-content-center">
-                        Mostrando 1-5 de 10
-                    </span>
-                </div>
+                    </div>       
+                    <?php 
+                        while($row = $reporteCsv->fetch_assoc()) 
+                        { 
+                            $id= $row['id'];
+                            $carrera=$row['Carrera'];
+                            $asignatura= $row['Asignatura'];
+                            $presidente= $row['presidente'];
+                            $vocal= $row['vocal'];
+                            $vocal1 =$row['vocal1'];
+                            $suplente= $row['suplente'];
+                            $fecha1= $row['fecha1'];
+                            $hora=$row['hora'];
+                            $tribunal=$row['tribunal'];
+                            $idLlamado=$row['idLlamado'];
+                            $idMesa=$row['idMesa'];
+                            $idasignatura=$row['Asignaturaid'];
+                            if(empty(@$Llamado->getTipo()) || @$Llamado->getTipo() == "general"){
+                                $fecha2= $row['fecha2'];
+                                echo
+                                '<tr>
+                                <td>'.$id.'</td>
+                                <td>'.$carrera.'</td>
+                                <td>'.$asignatura.'</td>
+                                <td>'.$presidente.'</td>
+                                <td>'.$vocal.'</td>
+                                <td>'.$vocal1.'</td>
+                                <td>'.$suplente.'</td>
+                                <td>'.$fecha1.'</td>
+                                <td>'.$fecha2.'</td>
+                                <td>'.$hora.'</td>
+                                <td align="center">
+                                <button class="btn btn-outline-primary" class="btn btn-outline-info">
+                                <span class="oi oi-zoom-in"></span>
+                                </button>
+                                </td>
+                                <td align="center">
+                                    <a title="Modificar" href="examen.modificar.php?id='.$tribunal.'&pres='.$presidente.'&vol='.$vocal.'&vol1='.$vocal1.'&sup='.$suplente.'&hora='.$hora.'&llam='.$idLlamado.'&mes='.$idMesa.'">
+                                    <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
+                                    <span class="oi oi-pencil"></span>
+                                    </button>
+                                </td>
+                                <td align="center">
+                                <a title="Eliminar" href="examen.eliminar.php?id='.$tribunal.'&llam='.$idLlamado.'&asignatura='.$asignatura.'&idasig='.$idasignatura.'&mes='.$idMesa.'">
+                                <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" ">
+                                <span class="oi oi-trash"></span>
+                                </button>
+                                </td>
+                               
+                                </tr>';  
+                            }else{
+                                echo
+                                '<tr>
+                                <td>'.$id.'</td>
+                                <td>'.$carrera.'</td>
+                                <td>'.$asignatura.'</td>
+                                <td>'.$presidente.'</td>
+                                <td>'.$vocal.'</td>
+                                <td>'.$vocal1.'</td>
+                                <td>'.$suplente.'</td>
+                                <td>'.$fecha1.'</td>
+                                <td>'.$hora.'</td>
+                                <td align="center">
+                                    <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
+                                    <span class="oi oi-pencil"></span>
+                                    </button>
+                                </td>
+                                <td align="center">
+                                    <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" onclick="PreguntarSiNO()">
+                                    <span class="oi oi-trash"></span>
+                                    </button>
+                                </td>
+                                <td align="center">
+                                    <button class="btn btn-outline-primary" class="btn btn-outline-info">
+                                    <span class="oi oi-zoom-in"></span>
+                                    </button>
+                                </td>
+                                </tr>';  
+                            }
+                        }  
+                    ?>
+                    </table>            
+                </div> 
+            <?php } ?>           
             </div>
-        </div>
+        </div>    
         <br>
     </div>
 </div>
+
         <?php include_once '../gui/footer.php'; ?>
     </body>
 </html>
+<script>
+    $(document).ready(function(){
+        $('#buscarAsignatura').keyup(function(){
+            var query=$(this).val();
+            if(query !='')
+            {
+                $.ajax({
+                    url:"buscarAsignatura.php",
+                    method:"POST",
+                    data:{query:query},
+                    success:function(data)
+                    {
+
+                        $('#listaAsignatura').fadeIn();
+                        $('#listaAsignatura').html(data);
+                    }
+
+                });
+            }
+            });
+         $(document).on('click', 'li', function(){  
+           $('#buscarAsignatura').val($(this).text());  
+           $('#listaAsignatura').fadeOut();  
+           }); 
+        });
+</script>
+
 <script>
     $(document).ready(function(){
         $('#buscarCarrera').keyup(function(){
