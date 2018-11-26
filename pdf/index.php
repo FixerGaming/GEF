@@ -27,7 +27,7 @@ $WHERE= "AND A.nombre = '".$Asignatura."'";
 }
 
 
-$reporte="SELECT C.nombre AS Carrera, C.id AS id, A.nombre AS Asignatura, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
+$reporte="SELECT C.nombre AS Carrera, C.id AS id, A.nombre AS Asignatura, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2,DATE_FORMAT(LM.fechaUnica, '%d/%m/%Y')AS fechaUnica, DATE_FORMAT(LM.hora,'%h:%m') AS hora
   FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
   INNER JOIN PROFESOR P ON T.presidente = P.id
   LEFT JOIN PROFESOR P1 ON  T.vocal = P1.id

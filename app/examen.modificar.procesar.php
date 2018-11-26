@@ -5,42 +5,30 @@ include_once '../modelo/BDConexion.Class.php';
 $DatosFormulario = $_POST;
 $idLlamado = $DatosFormulario["idLlamado"];
 $idMesa = $DatosFormulario["idMesa"];
-$tribunal = $DatosFormulario["tribunal"];
-$presidente = $DatosFormulario['Presidente'];
-$vocal1 = $DatosFormulario['vocal1'];
-$vocal2 = $DatosFormulario['vocal2'];
-$suplente = $DatosFormulario['Suplente'];
+$TIPO = $DatosFormulario["tipoLlamado"];
+
+$fechainicio=strrev($DatosFormulario["fechainicio"]);
+
+if($TIPO == "general"){
+$fechafinal=strrev($DatosFormulario["fechainicio"]);
+}
+$fecha = new DateTime($DatosFormulario["fechainicio"]);
+$fecha_d_m_y1 = $fecha->format('Y/m/d');
+
+if($TIPO == "general"){
+$fecha = new DateTime($DatosFormulario["fechafinal"]);
+$fecha_d_m_y2 = $fecha->format('Y/m/d');
+}
+
 $hora = $DatosFormulario['Hora'];
 
-$ConsultaPresidente= "SELECT P.id AS id FROM PROFESOR P WHERE P.nombre LIKE '%".$presidente."%'";
-$ConsultasPresidente= BDConexion::getInstancia()->query($ConsultaPresidente);
-$row1= $ConsultasPresidente->fetch_assoc();
-$ConsultaVocal1= "SELECT P.id AS id FROM PROFESOR P WHERE P.nombre = '".$vocal1."'";
-$ConsultasVocal1= BDConexion::getInstancia()->query($ConsultaVocal1);
-$row2= $ConsultasVocal1->fetch_assoc();
-$ConsultaVocal2= "SELECT P.id  AS id FROM PROFESOR P WHERE P.nombre = '".$vocal2."'";
-$ConsultasVocal2= BDConexion::getInstancia()->query($ConsultaVocal2);
-$row3= $ConsultasVocal2->fetch_assoc();
-$ConsultaSuplente= "SELECT P.id AS id FROM PROFESOR P WHERE P.nombre = '".$suplente."'";
-$ConsultasSuplente= BDConexion::getInstancia()->query($ConsultaSuplente);
-$row4= $ConsultasSuplente->fetch_assoc();
-
-
-
-if($ConsultasPresidente->num_rows > 0){
-    $existePresidente = "presidente = '{$row1["id"]}'";
-}
-if($ConsultasVocal1->num_rows > 0){
-    $existeVocal1 = "vocal = '{$row2["id"]}'";
-}
-if($ConsultasVocal2->num_rows > 0){
-    $existeVocal2 = "vocal1 = '{$row3["id"]}'";
-}
-if($ConsultasSuplente->num_rows > 0){
-    $existeSuplente = "suplente = '{$row4["id"]}'";
-}
-$query = "UPDATE TRIBUNAL SET $existePresidente,$existeVocal1,$existeVocal2,$existeSuplente WHERE id = {$tribunal}";
+if($TIPO == "general"){
+$query = "UPDATE LLAMADO_MESA_EXAMEN SET fechaUnica = '{$fecha_d_m_y1}',fechaUnica1 = '{$fecha_d_m_y2}' WHERE idLlamado = {$idLlamado} AND idMesa = {$idMesa}";
 $consulta = BDConexion::getInstancia()->query($query);
+}
+    $query = "UPDATE LLAMADO_MESA_EXAMEN SET fechaUnica = '{$fecha_d_m_y1}' WHERE idLlamado = {$idLlamado} AND idMesa = {$idMesa}";
+    $consulta = BDConexion::getInstancia()->query($query);
+
 $query2 = "UPDATE FECHA SET hora = '{$hora}' WHERE idLlamado = {$idLlamado} AND idMesa = {$idMesa}";
 $consulta2 = BDConexion::getInstancia()->query($query2);
 if (!$consulta && !$consulta2 ) {
@@ -48,11 +36,6 @@ if (!$consulta && !$consulta2 ) {
     //arrojar una excepcion
     die(BDConexion::getInstancia()->errno);
 }
-
-
-
-
-
 
 ?>
 <html>

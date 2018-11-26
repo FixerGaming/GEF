@@ -125,7 +125,7 @@ include_once '../modelo/Llamado.Class.php';
                 }
                 
                 
-                $reporte="SELECT C.id AS id,LM.idLlamado AS idLlamado, LM.idMesa AS idMesa, C.nombre AS Carrera, A.nombre AS Asignatura,A.id AS Asignaturaid,T.id AS tribunal, P.nombre AS presidente, P1.nombre AS vocal, LM.fechaUnica AS fechaUnica, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora
+                $reporte="SELECT C.id AS id,LM.idLlamado AS idLlamado, LM.idMesa AS idMesa, C.nombre AS Carrera, A.nombre AS Asignatura,A.id AS Asignaturaid,T.id AS tribunal, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora,  DATE_FORMAT(LM.fechaUnica, '%d/%m/%Y') AS fechaUnica
                 FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
                 INNER JOIN PROFESOR P ON T.presidente = P.id
                 LEFT JOIN PROFESOR P1 ON  T.vocal = P1.id
@@ -157,9 +157,11 @@ include_once '../modelo/Llamado.Class.php';
                         <input type="hidden" name="Docente" value=<?php echo $Docente;?>>
                         <input type="hidden" name="id2" value=<?php echo $MesaExamen;?>>
                         <input type="hidden" name="Tipo" value=<?php echo $TIPO;?>>
+
                         <button class="btn btn-outline-warning">GENERAR PDF</button>
                         <h3 align="center">Mesa Elegida: <?php echo $Nombre;?></h3>
                         </form>
+                        
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -217,7 +219,12 @@ include_once '../modelo/Llamado.Class.php';
                                 <td>'.$presidente.'</td>
                                 <td>'.$vocal.'</td>
                                 <td>'.$vocal1.'</td>
-                                <td>'.$suplente.'</td>
+                                <td>'.$suplente.'</td>';
+                                if($fechaUnica != null){
+                                echo'
+                                <td style="background-color:"#9c9c9c">'.$fecha1.'</td>';
+                                }else
+                                echo'
                                 <td>'.$fecha1.'</td>
                                 <td>'.$fecha2.'</td>
                                 <td>'.$fechaUnica.'</td>
@@ -228,7 +235,7 @@ include_once '../modelo/Llamado.Class.php';
                                 </button>
                                 </td>
                                 <td align="center">
-                                    <a title="Modificar" href="examen.modificar.php?id='.$tribunal.'&pres='.$presidente.'&vol='.$vocal.'&vol1='.$vocal1.'&sup='.$suplente.'&hora='.$hora.'&llam='.$idLlamado.'&mes='.$idMesa.'">
+                                    <a title="Modificar" href="examen.modificar.php?fecha1='.$fecha1.'&fecha2='.$fecha2.'&hora='.$hora.'&llam='.$idLlamado.'&mes='.$idMesa.'&tipo='.$TIPO.'">
                                     <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
                                     <span class="oi oi-pencil"></span>
                                     </button>
@@ -250,16 +257,24 @@ include_once '../modelo/Llamado.Class.php';
                                 <td>'.$presidente.'</td>
                                 <td>'.$vocal.'</td>
                                 <td>'.$vocal1.'</td>
-                                <td>'.$suplente.'</td>
-                                <td>'.$fecha1.'</td>
+                                <td>'.$suplente.'</td>';
+                                if($fechaUnica != null){
+                                echo'
+                                <td style="background-color:#E66969">'.$fecha1.'</td>';
+                                }else{
+                                echo'
+                                <td>'.$fecha1.'</td>';
+                                }
+                                echo'
                                 <td>'.$fechaUnica.'</td>
                                 <td>'.$hora.'</td>
+                                <td align="center">
                                 <button class="btn btn-outline-primary" class="btn btn-outline-info">
                                 <span class="oi oi-zoom-in"></span>
                                 </button>
                                 </td>
                                 <td align="center">
-                                    <a title="Modificar" href="examen.modificar.php?id='.$tribunal.'&pres='.$presidente.'&vol='.$vocal.'&vol1='.$vocal1.'&sup='.$suplente.'&hora='.$hora.'&llam='.$idLlamado.'&mes='.$idMesa.'">
+                                    <a title="Modificar" href="examen.modificar.php?fecha1='.$fecha1.'&hora='.$hora.'&llam='.$idLlamado.'&mes='.$idMesa.'&tipo='.$TIPO.'">
                                     <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
                                     <span class="oi oi-pencil"></span>
                                     </button>
@@ -270,6 +285,7 @@ include_once '../modelo/Llamado.Class.php';
                                 <span class="oi oi-trash"></span>
                                 </button>
                                 </td>
+                               
                                 </tr>';  
                             }
                         }  

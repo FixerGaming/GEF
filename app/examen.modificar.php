@@ -3,14 +3,12 @@ include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 
 
-$tribunal=$_GET["id"];
-$presidente=$_GET["pres"];
-$vocal1=$_GET["vol"];
-$vocal2=$_GET["vol1"];
-$suplente=$_GET["sup"];
+$fecha1=$_GET['fecha1'];
+$fecha2=$_GET['fecha2'];
 $hora=$_GET["hora"];
 $idLlamado=$_GET["llam"];
 $idMesa=$_GET["mes"];
+$TIPO=$_GET["tipo"];
 
 ?>
 <html>
@@ -37,30 +35,45 @@ $idMesa=$_GET["mes"];
                     </div>
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="inputFechaInicio">Presidente</label>
-                            <input type="text" name="Presidente" class="form-control" id="inputPresidente" value="<?= $presidente; ?>" placeholder="Ingrese el presidente a modificar" required="">
+                            <label for="inputFechaInicio">Primer Llamado</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly class="form-control-plaintext" id="staticEmail" value=<?php echo $fecha1?>>
+                            </div>
                         </div>
+                        <?php if($fecha2 != null){?>
                         <div class="form-group">
-                            <label for="inputFechaFinal">Vocal 1</label>
-                            <input type="datetime" name="vocal1" class="form-control" id="inputVocal1" value="<?= $vocal1; ?>" placeholder="Ingrese el vocal 1 a modificar" required="">
+                            <label for="inputFechaInicio">Segundo Llamado</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly class="form-control-plaintext" id="staticEmail" value=<?php echo $fecha2?>>
+                            </div>
                         </div>
+                        <?php }?>
                         <div class="form-group">
-                            <label for="inputNombre">Vocal 2</label>
-                            <input type="text" name="vocal2" class="form-control" id="inputVocal2" value="<?= $vocal2; ?>" placeholder="Ingrese el vocal 2 a modificar" required="">
+                            <label for="inputFechaInicio">Primer Llamado</label>
+                            <input type="date" name="fechainicio" class="form-control" id="inputFechaInicio"  placeholder="Ingrese la fecha de inicio" oninput="validar('inputFechaInicio')" required pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}"title="Ingrese formato de fecha dd/mm/yyyy" >
                         </div>
+                        <div class="invalid-feedback">
+                          Ingresar Dia de Inicio
+                        </div>
+                        <?php if($fecha2 != null){?>
                         <div class="form-group">
-                            <label for="inputDescripcion">Suplente</label>
-                            <input type="text" name="Suplente" class="form-control" id="inputSuplente" value="<?= $suplente; ?>" placeholder="Ingrese un Suplente" required="">
+                            <label for="inputFechaFinal">Segundo Llamado</label>
+                            <input type="date" name="fechafinal" class="form-control" id="inputFechaFinal"  placeholder="Ingrese la fecha de finalizacion" oninput="validate()" required pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}" title="Ingrese formato de fecha dd/mm/yyyy">
                         </div>
+                        <div class="invalid-feedback">
+                          Ingresar Dia de Fin
+                        </div> 
+                        <?php }?>
                         <div class="form-group">
                             <label for="inputDescripcion">Hora</label>
                             <input type="text" name="Hora" class="form-control" id="inputHora" value="<?= $hora; ?>" placeholder="Ingrese la hora de la mesa" required="">
                         </div>
                     <input type="hidden" name="idLlamado" class="form-control" id="idLlamado" value="<?= $idLlamado; ?>" >
                     <input type="hidden" name="idMesa" class="form-control" id="idMesa" value="<?= $idMesa; ?>" >
+                    <input type="hidden" name="tipoLlamado" class="form-control" id="tipoLlamado" value="<?= $TIPO; ?>" >
                     <input type="hidden" name="tribunal" class="form-control" id="tribunal" value="<?= $tribunal; ?>" >
-                      </div>
-                      <div class="class-footer">
+                    </div>
+                    <div class="class-footer">
                           <button type="submit" class="btn btn-outline-success">
                               <span class="oi oi-check"></span>
                               Confirmar
@@ -71,7 +84,7 @@ $idMesa=$_GET["mes"];
                                   Cancelar
                               </button>
                           </a>
-                      </div>
+                    </div>
                 </div>
             </form>
         </div>

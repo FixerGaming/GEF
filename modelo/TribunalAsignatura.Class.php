@@ -10,7 +10,7 @@ class TribunalAsignatura extends BDObjetoGenerico {
     }
 
     function getId() {
-        return $this->idTribunalAsignatura;
+        return $this->id;
     }
     function getTribunalid() {
         return $this->TRIBUNAL_id;

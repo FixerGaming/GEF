@@ -24,7 +24,7 @@ $TIPO= $Llamado->getTipo();
 $DatosFormulario = $_POST;
 $query = "SELECT  A.id AS asignatura, T.id AS tribunal
 FROM ASIGNATURA  A 
-INNER JOIN TRIBUNAL_has_ASIGNATURA TA ON A.id = TA.ASIGNATURA_id
+INNER JOIN tribunalasignaturas TA ON A.id = TA.ASIGNATURA_id
 INNER JOIN TRIBUNAL T ON T.id = TA.TRIBUNAL_id
 where A.nombre ='{$DatosFormulario["buscarAsignatura"]}'";
 

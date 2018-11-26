@@ -6,8 +6,8 @@ include_once '../modelo/ColeccionLicencia.php';
 include_once '../modelo/ColeccionDocentes.php';
 
 $DatosFormulario = $_POST;
-$fechainicio=strrev($DatosFormulario["fechainicio"]);
-$fechafinal=strrev($DatosFormulario["fechainicio"]);
+$fecha1=strrev($DatosFormulario["fechainicio"]);
+$fecha2=strrev($DatosFormulario["fechafinal"]);
 
 
 $fecha = new DateTime($DatosFormulario["fechainicio"]);
@@ -27,8 +27,7 @@ while($row = $result->fetch_array())
 
 
 
-
-$query = "INSERT INTO Licencia VALUES (null,'$fecha_d_m_y1','$fecha_d_m_y2','".$id1."')";
+$query = "INSERT INTO LICENCIA VALUES (null,'$fecha_d_m_y1','$fecha_d_m_y2','".$id1."')";
 $consulta = BDConexion::getInstancia()->query($query);
 $ColeccionLicencias = new ColeccionLicencia();
 foreach ($ColeccionLicencias->getLicencias() as $Licencia) {
@@ -62,6 +61,7 @@ if (!$consulta && !$consulta2) {
             <div class="card">
                 <div class="card-header">
                     <h3>Crear Novedad</h3>
+                    <?php echo $id1?>
                 </div>
                 <div class="card-body">
                     <?php if ($consulta && $consulta2) { ?>

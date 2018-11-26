@@ -78,7 +78,7 @@ include_once '../modelo/Llamado.Class.php';
                     <p>
                         <a href="examen.crear.php">
                         <button type="button" class="btn btn-success btn-block btn-lg">
-                            <span class="oi oi-plus"></span> Nuevo Examen
+                            <span class="oi oi-plus"></span> Agregar Examen
                         </button>
                         </a>
                     </p>
