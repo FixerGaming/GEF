@@ -15,8 +15,10 @@
     //Utilizacion de sessiones para mandar el id del llamado seleccionado
     session_start();
     $_SESSION['llamado']=$Llamado->getId();
+    header("Location:examen.crear.procesar.php");
     header("Location:examenBuscar.php");
     header("Location:gestionExamen.php");
+   
 
     //Si se aprieta el Boton "Calendario" se recarga la pagina y cuando llega al if si esta apretado entra, en el caso deque no lo salta y no se realiza ninguna operacion
     if(isset($_POST['calendario'])){

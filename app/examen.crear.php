@@ -10,8 +10,6 @@ $ColeccionDocente = new ColeccionDocentes();
 $ColeccionAsignatura = new ColeccionAsignaturas();
 $ColeccionLlamado = new ColeccionLlamado();
 $ColeccionCarrera = new ColeccionCarrera();
-
-
 ?>
 <html>
     <head>
@@ -26,6 +24,7 @@ $ColeccionCarrera = new ColeccionCarrera();
     </head>
     <body>
         <?php include_once '../gui/navbar.php'; ?>
+
         <div class="container">
             <form action="examen.crear.procesar.php" method="post">
                 <div class="card">
@@ -50,60 +49,13 @@ $ColeccionCarrera = new ColeccionCarrera();
                             </select>
                         </div>
                         <div class="form-row">
-                             <label for="selectTipoBusqueda">Seleccione Asignatura</label>
-                             <select class="form-control" name="selectAsignatura">
-                             <?php foreach ($ColeccionAsignatura->getAsignaturas() as $Asignatura) {
-
-                                echo '<option value="'.$Asignatura->getId().'">'.$Asignatura->getNombre().'</option>';
-                            }
-                            ?>
-                            </select>
+                            <label for="inputExpediente">Por Asignatura</label> 
                         </div>
-
-
-                        <div class="form-row">
-                             <label for="selectTipoBusqueda">Seleccione Docente Presidente de Mesa</label>
-                             <select class="form-control" name="selectPresidente">
-                             <?php foreach ($ColeccionDocente->getDocentes() as $Docente) {
-                                echo '<option value="'.$Docente->getId().'">'.$Docente->getNombre().'</option>';
-                            }
-                            ?>
-                            </select>
+                        <div class="form-group">
+                            <input type="text" name="buscarAsignatura" class="form-control" id ="buscarAsignatura" >
+                            <div id="listaAsignatura"></div>
                         </div>
-                        <div class="form-row">
-                             <label for="selectTipoBusqueda">Seleccione Docente Vocal</label>
-                             <select class="form-control" name="selectVocal">
-                             <?php foreach ($ColeccionDocente->getDocentes() as $Docente) {
-                                echo '<option value="'.$Docente->getId().'">'.$Docente->getNombre().'</option>';
-                            }
-                            ?>
-                            </select>
-                        </div>
-                        <div class="form-row">
-                             <label for="selectTipoBusqueda">Seleccione Docente Vocal 2</label>
-                             <select class="form-control" name="selectVocal2">
-                             <?php foreach ($ColeccionDocente->getDocentes() as $Docente) {
-                                echo '<option value="'.$Docente->getId().'">'.$Docente->getNombre().'</option>';
-                            }
-                            ?>
-                            </select>
-                        </div>
-                        <div class="form-row">
-                             <label for="selectTipoBusqueda">Seleccione Docente Suplente</label>
-                             <select class="form-control" name="selectSuplente">
-                               <option value="">Sin suplente </option>;
-                             <?php foreach ($ColeccionDocente->getDocentes() as $Docente) {
-
-                                echo '<option value="'.$Docente->getId().'">'.$Docente->getNombre().'</option>';
-                            }
-                            ?>
-                            </select>
-                        </div>
-
-
-
-
-
+                
                         <div class "form-group">
                             <label for="habil">Dia Habil</label>
                           <select  class="form-control " name="orden" >
@@ -118,7 +70,6 @@ $ColeccionCarrera = new ColeccionCarrera();
                             <label for="inputNombre">Hora</label>
                             <input type="time" name="hora" class="form-control" id="hora"oninput="validar('hora')" placeholder="Ingrese hora" required=""min="13:00" max="21:00">
                         </div>
-
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-outline-success">
@@ -138,3 +89,29 @@ $ColeccionCarrera = new ColeccionCarrera();
         <?php include_once '../gui/footer.php'; ?>
     </body>
 </html>
+<script>
+    $(document).ready(function(){
+        $('#buscarAsignatura').keyup(function(){
+            var query=$(this).val();
+            if(query !='')
+            {
+                $.ajax({
+                    url:"buscarAsignatura.php",
+                    method:"POST",
+                    data:{query:query},
+                    success:function(data)
+                    {
+
+                        $('#listaAsignatura').fadeIn();
+                        $('#listaAsignatura').html(data);
+                    }
+
+                });
+            }
+            });
+         $(document).on('click', 'li', function(){  
+           $('#buscarAsignatura').val($(this).text());  
+           $('#listaAsignatura').fadeOut();  
+           }); 
+        });
+</script>

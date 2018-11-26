@@ -87,7 +87,7 @@ include_once '../modelo/Llamado.Class.php';
                     <p>
                         <a href="examen.crear.php">
                         <button type="button" class="btn btn-success btn-block btn-lg">
-                            <span class="oi oi-plus"></span> Nuevo Examen
+                            <span class="oi oi-plus"></span> Agregar Examen
                         </button>
                         </a>
                     </p>
@@ -158,6 +158,7 @@ include_once '../modelo/Llamado.Class.php';
                         <input type="hidden" name="id2" value=<?php echo $MesaExamen;?>>
                         <input type="hidden" name="Tipo" value=<?php echo $TIPO;?>>
                         <button class="btn btn-outline-warning">GENERAR PDF</button>
+                        <h3 align="center">Mesa Elegida: <?php echo $Nombre;?></h3>
                         </form>
                         </div>
                     </div>
@@ -253,20 +254,21 @@ include_once '../modelo/Llamado.Class.php';
                                 <td>'.$fecha1.'</td>
                                 <td>'.$fechaUnica.'</td>
                                 <td>'.$hora.'</td>
+                                <button class="btn btn-outline-primary" class="btn btn-outline-info">
+                                <span class="oi oi-zoom-in"></span>
+                                </button>
+                                </td>
                                 <td align="center">
+                                    <a title="Modificar" href="examen.modificar.php?id='.$tribunal.'&pres='.$presidente.'&vol='.$vocal.'&vol1='.$vocal1.'&sup='.$suplente.'&hora='.$hora.'&llam='.$idLlamado.'&mes='.$idMesa.'">
                                     <button class="btn btn-outline-warning" class="glyphicon glyphicon-pencil" data-toggle="modal" data-target="#modaledita" onclick=agregaform"(<<?php echo $datos; ?>
                                     <span class="oi oi-pencil"></span>
                                     </button>
                                 </td>
                                 <td align="center">
-                                    <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" onclick="PreguntarSiNO()">
-                                    <span class="oi oi-trash"></span>
-                                    </button>
-                                </td>
-                                <td align="center">
-                                    <button class="btn btn-outline-primary" class="btn btn-outline-info">
-                                    <span class="oi oi-zoom-in"></span>
-                                    </button>
+                                <a title="Eliminar" href="examen.eliminar.php?id='.$tribunal.'&llam='.$idLlamado.'&asignatura='.$asignatura.'&idasig='.$idasignatura.'&mes='.$idMesa.'">
+                                <button class="btn btn-outline-danger" class="glyphicon glyphicon-trash" ">
+                                <span class="oi oi-trash"></span>
+                                </button>
                                 </td>
                                 </tr>';  
                             }

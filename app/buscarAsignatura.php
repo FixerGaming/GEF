@@ -19,7 +19,7 @@ if(isset($_POST["query"]))
   }
   else
   {
-  	$output .= '<li class="list-group-item" >No se encontraron Asignaturas con ese Nombre</li>';
+  	$output .= '<li class="list-group-item" >No se econtraron asignaturas</li>';
   }
   $output .= '</ul>';
   echo $output;

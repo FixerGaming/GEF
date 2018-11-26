@@ -2,17 +2,15 @@
 include_once '../lib/ControlAcceso.Class.php';
 ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionDocentes.php';
-include_once '../modelo/ColeccionCargo.php';
-include_once '../modelo/ColeccionDepartamento.php';
 include_once  '../modelo/ColeccionMesaExamen.php';
 include_once  '../modelo/ColeccionTribunal.php';
 include_once  '../modelo/ColeccionAsignaturas.php';
+include_once  '../modelo/ColeccionTribunalAsignatura.php';
 $ColeccionDocente = new ColeccionDocentes();
-$ColeccionCargo = new ColeccionCargo();
-$ColeccionDepartamento = new ColeccionDepartamento(); 
 $ColeccionMesaExamen = new ColeccionMesaExamen();
 $ColeccionTribunal = new ColeccionTribunal();
 $ColeccionAsignaturas = new ColeccionAsignaturas();
+$ColeccionTribunalAsignatura = new ColeccionTribunalAsignatura();
 ?>
 <html>
     <head>
@@ -70,7 +68,7 @@ $ColeccionAsignaturas = new ColeccionAsignaturas();
                         </div>
                     </form>
                     <p>
-                        <a href="docente.crear.php">
+                        <a href="afectacion.crear.php">
                         <button type="button" class="btn btn-success btn-block btn-lg">
                             <span class="oi oi-plus"></span> Agregar Tribunal
                         </button>
@@ -97,15 +95,16 @@ $ColeccionAsignaturas = new ColeccionAsignaturas();
                               <td>Eliminar</td>
                             </tr>
                             <tr>
-                                <?php foreach ($ColeccionTribunal->getTribunales() as $Tribunal)
+                                <?php foreach ($ColeccionTribunalAsignatura->getTribunalesAsignaturas() as $TribunalAsignatura)
                                         {
-                                          foreach ($ColeccionMesaExamen->getMesas() as $MesaExamen)
+                                          foreach ($ColeccionTribunal->getTribunales() as $Tribunal)
                                             {
-                                              foreach ($ColeccionAsignaturas->getAsignaturas() as $Asignatura) {
+                                              foreach ($ColeccionAsignaturas->getAsignaturas() as $Asignatura)
+                                               {
                                               
                                               
-                                                if($Tribunal->getID () == $MesaExamen->getIdtribunal() && $Asignatura->getId() == $MesaExamen->getIdAsignatura())
-                                                    {
+                                                if($Tribunal->getID () == $TribunalAsignatura->getTribunalid() && $Asignatura->getId() == $TribunalAsignatura->getAsignaturaid())
+                                                      {
                                                       $idtitular= $Tribunal->getPresidente();
                                                       $idvocal= $Tribunal->getVocal();
                                                       $idvocal1= $Tribunal->getVocal1();
@@ -113,18 +112,61 @@ $ColeccionAsignaturas = new ColeccionAsignaturas();
                                                       $titular = new Docente($idtitular);
                                                       $vocal = new Docente($idvocal);
                                                       $vocal1 = new Docente($idvocal);
-                                                      if (!empty($idsuplente))
-                                                      {
+                                                        if (!empty($idsuplente))
+                                                          {
 
-                                                      $suplente = new Docente($idsuplente);
+                                                             $suplente = new Docente($idsuplente);
+                                                             $nombretitular =  $titular->getNombre();  
+                                                             $apellidotitular= $titular->getApellido();
+                                                             $nombrevocal=$vocal->getNombre();
+                                                             $apellidovocal= $vocal->getApellido();
+                                                             $nombrevocal1=$vocal1->getNombre();
+                                                             $apellidovocal1= $vocal1->getApellido();
+                                                             $nombresuplente =$suplente->getNombre();
+                                                             $apellidosuplente = $suplente->getApellido();
 
-
-                                    ?>
+                                                          ?>
                                     <td><?= $Asignatura->getNombre(); ?></td>
-                                    <td><?= $titular->getNombre(); ?></td>
-                                    <td><?= $vocal->getNombre();?></td>
-                                    <td><?= $vocal1->getNombre(); ?></td>
-                                    <td><?= $suplente->getNombre();?></td>
+                                    <td><?= $nombretitular." ".$apellidotitular  ?></td>
+                                    <td><?= $nombrevocal." ".$apellidovocal?></td>
+                                    <td><?= $nombrevocal1." ".$apellidovocal1 ?></td>
+                                    <td><?= $nombresuplente." ".$apellidosuplente?></td>
+                                    <td>
+                                        <a title="Ver detalle" href="afectacion.ver.php?id=<?= $Tribunal->getId();?>&id1=<?= $TribunalAsignatura->getId(); ?>&id2=<?=$Asignatura->getId(); ?>">
+                                            <button type="button" class="btn btn-outline-info">
+                                                <span class="oi oi-zoom-in"></span>
+                                            </button></a>
+
+                                    </td>
+                                    <td>
+                                        <a title="Modificar" href="afectacion.modificar.php?id=<?= $Tribunal->getId();?>&id1=<?= $TribunalAsignatura->getId();?>">
+                                            <button type="button" class="btn btn-outline-warning">
+                                                <span class="oi oi-pencil"></span>
+                                            </button></a>
+                                    </td>
+                                    <td>
+                                        <a title="Eliminar" href="afectacion.eliminar.php?id=<?= $Tribunal->getId(); ?>&id1=<?= $TribunalAsignatura->getId();?>">
+                                          <button class="btn btn-outline-danger" class="btn btn-outline-info">
+                                             <span class="oi oi-trash"></span>
+                                          </button></a>
+                                    </td>
+                                </tr>
+                            <?php
+                            } 
+                                                      else{
+
+                                                            $nombretitular =  $titular->getNombre();  
+                                                            $apellidotitular= $titular->getApellido();
+                                                            $nombrevocal=$vocal->getNombre();
+                                                            $apellidovocal= $vocal->getApellido();
+                                                            $nombrevocal1=$vocal1->getNombre();
+                                                            $apellidovocal1= $vocal1->getApellido();
+                                   ?>
+                                    <td><?= $Asignatura->getNombre(); ?></td>
+                                    <td><?= $nombretitular." ".$apellidotitular  ?></td>
+                                    <td><?= $nombrevocal." ".$apellidovocal?></td>
+                                    <td><?= $nombrevocal1." ".$apellidovocal1 ?></td>
+                                    <td></td>
                                     <td>
                                         <a title="Ver detalle" href="afectacion.ver.php?id=<?= $Tribunal->getId();?>&id1=<?= $MesaExamen->getId(); ?>&id2=<?=$Asignatura->getId(); ?>">
                                             <button type="button" class="btn btn-outline-info">
@@ -144,13 +186,15 @@ $ColeccionAsignaturas = new ColeccionAsignaturas();
                                              <span class="oi oi-trash"></span>
                                           </button></a>
                                     </td>
-                                </tr>
-                            <?php 
-                             }
+                                </tr> 
+
+                            <?php  
+                            }   
+                            }
                           }
                           }
                          }
-                       } ?>
+                        ?>
                     </table>
                   </div>
               </div>

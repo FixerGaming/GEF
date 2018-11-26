@@ -4,43 +4,66 @@ ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/BDConexion.Class.php';
 include_once '../modelo/ColeccionTribunal.php';
 include_once '../modelo/ColeccionMesaExamen.php';
+include_once '../modelo/Llamado.Class.php';
+
+error_reporting(E_ERROR | E_PARSE);
+
+@$MesaExamen= $_SESSION['llamado'];
+//Consulta a la Base de Datos para recuperar el ID, Tipo y nombre del LLAMADO
+$Consulta="SELECT L.id AS identifica, L.tipo AS tipo, L.nombre AS nombre FROM LLAMADO L WHERE L.id LIKE '%".$MesaExamen."%'";
+$Consultas=BDConexion::getInstancia()->query($Consulta);
+$row = $Consultas->fetch_assoc();
+$Llamado = new Llamado($row['identifica']);
+$Llamado->setTipo($row['tipo']);
+$Llamado->setId($row['identifica']);
+$Llamado->setNombre($row['nombre']);
+$Nombre= $Llamado->getNombre();
+$ID=$Llamado->getId();
+$TIPO= $Llamado->getTipo();
 
 $DatosFormulario = $_POST;
+$query = "SELECT  A.id AS asignatura, T.id AS tribunal
+FROM ASIGNATURA  A 
+INNER JOIN TRIBUNAL_has_ASIGNATURA TA ON A.id = TA.ASIGNATURA_id
+INNER JOIN TRIBUNAL T ON T.id = TA.TRIBUNAL_id
+where A.nombre ='{$DatosFormulario["buscarAsignatura"]}'";
 
-
-$query = "INSERT INTO tribunal VALUES (null,'{$DatosFormulario["selectPresidente"]}','{$DatosFormulario["selectVocal"]}','{$DatosFormulario["selectVocal2"]}','{$DatosFormulario["selectSuplente"]}')";
-$consulta = BDConexion::getInstancia()->query($query);
-$ColeccionTribunal = new ColeccionTribunal();
-foreach ($ColeccionTribunal->getTribunales() as $Tribunal) {
-  if ($DatosFormulario ["selectPresidente"] == $Tribunal->getPresidente() && $DatosFormulario ["selectVocal"] == $Tribunal->getVocal() && $DatosFormulario ["selectVocal2"] == $Tribunal->getVocal1() && $DatosFormulario ["selectSuplente"] == $Tribunal->getSuplente() )
-  {
-    $id=$Tribunal->getId();
-  }
-}
-
-
-$query2 = "INSERT INTO mesa_examen VALUES (null,'$id','{$DatosFormulario["selectAsignatura"]}','{$DatosFormulario["orden"]}')";
+        $result = BDConexion::getInstancia()->query($query);
+        $row = $result->fetch_array();
+        $Asignatura=$row["asignatura"]; 
+        $Tribunal=$row["tribunal"]; 
+      
+$query2 = "INSERT INTO mesa_examen VALUES (null,'$Tribunal','$Asignatura','{$DatosFormulario["orden"]}')";
 $consulta2 = BDConexion::getInstancia()->query($query2);
-$ColeccionMesaExamenes = new ColeccionMesaExamen();
-foreach ($ColeccionMesaExamenes->getMesas() as $MesaExamen) {
-  if ($DatosFormulario ["selectAsignatura"] == $MesaExamen->getIdAsignatura() && $DatosFormulario ["orden"] == $MesaExamen->getOrden() && $id == $MesaExamen->getIdtribunal())
-  {
-    $idmesa=$MesaExamen->getId();
-  }
-}
-$query3 = "INSERT INTO mesa_examen_carrera VALUES ('$idmesa','{$DatosFormulario["selectCarrera"]}')";
+
+$query5 = "SELECT M.id AS mesa
+FROM MESA_EXAMEN M
+INNER JOIN ASIGNATURA  A ON A.id=M.codAsignatura
+INNER JOIN TRIBUNAL T ON T.id = M.idTribunal
+";
+      
+        $result1 = BDConexion::getInstancia()->query($query5);
+        WHILE($row = $result1->fetch_array()){
+            $array= array($row["mesa"]);
+            array_push($array);
+        }
+
+      $Mesa= end($array);
+
+
+$query3 = "INSERT INTO mesa_examen_carrera VALUES (NULL,'$Mesa','{$DatosFormulario["selectCarrera"]}')";
 $consulta3 = BDConexion::getInstancia()->query($query3);
-for ($i=2; $i <= 5 ; $i++) {
-  $query4 = "INSERT INTO llamado_mesa_examen VALUES ('$i','$idmesa','{$DatosFormulario["hora"]}',Null)";
-  $consulta4 = BDConexion::getInstancia()->query($query4);
-}
+
+$query4 = "INSERT INTO llamado_mesa_examen VALUES (NULL,'$ID','$Mesa','{$DatosFormulario["hora"]}',NULL,NULL)";
+$consulta4 = BDConexion::getInstancia()->query($query4);
 
 
-//if (!$consulta && !$consulta2) {
-//    BDConexion::getInstancia()->rollback();
+
+if (!$consulta && !$consulta2) {
+    BDConexion::getInstancia()->rollback();
     //arrojar una excepcion
-//    die(BDConexion::getInstancia()->errno);
-//}
+    die(BDConexion::getInstancia()->errno);
+}
 ?>
 <html>
     <head>
@@ -52,7 +75,6 @@ for ($i=2; $i <= 5 ; $i++) {
         <title><?= Constantes::NOMBRE_SISTEMA; ?> - Crear Examen</title>
     </head>
     <body>
-      <?php echo $idmesa ?>
         <?php include_once '../gui/navbar.php'; ?>
         <div class="container">
             <p></p>

@@ -19,7 +19,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../app/inicio.php">
+                <a class="nav-link" href="../app/gestionExamen.php">
                     <span class="oi oi-spreadsheet" />
                     Gestionar mesa de examen
                 </a>
