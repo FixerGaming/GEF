@@ -4,7 +4,7 @@ ControlAcceso::requierePermiso(PermisosSistema::PERMISO_USUARIOS);
 include_once '../modelo/ColeccionCarrera.php';
 $ColeccionCarrera = new ColeccionCarrera();
 include_once '../modelo/Llamado.Class.php';
-error_reporting(E_ERROR | E_PARSE);
+
 ?>
 
 <html>
@@ -93,7 +93,6 @@ error_reporting(E_ERROR | E_PARSE);
                     </p>
                         <form action="../csv/reporte.php" method="POST">
                             <button tyoe="submit"  name="reporte"  class="btn btn-outline-primary">GENERAR CSV 1</button>
-                            <input type="hidden" name="llamado" value=<?php echo $Llamado->getId();?>>
                             <br>
                             <br>
                             <button  type="submit" name="reporte1" class="btn btn-outline-primary">GENERAR CSV 2</button>
@@ -126,7 +125,7 @@ error_reporting(E_ERROR | E_PARSE);
                 }
                 
                 
-                $reporte="SELECT C.id AS id,LM.idLlamado AS idLlamado, LM.idMesa AS idMesa, C.nombre AS Carrera, A.nombre AS Asignatura,A.id AS Asignaturaid,T.id AS tribunal, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora,  DATE_FORMAT(LM.fechaUnica, '%d/%m/%Y') AS fechaUnica,DATE_FORMAT(LM.fechaUnica1, '%d/%m/%Y') AS fechaUnica1
+                $reporte="SELECT C.id AS id,LM.idLlamado AS idLlamado, LM.idMesa AS idMesa, C.nombre AS Carrera, A.nombre AS Asignatura,A.id AS Asignaturaid,T.id AS tribunal, P.nombre AS presidente, P1.nombre AS vocal, P2.nombre AS vocal1, P3.nombre AS suplente, DATE_FORMAT(F.fecha1, '%d/%m/%Y') AS fecha1, DATE_FORMAT(F.fecha2, '%d/%m/%Y')AS fecha2, DATE_FORMAT(LM.hora,'%h:%m') AS hora,  DATE_FORMAT(LM.fechaUnica, '%d/%m/%Y') AS fechaUnica
                 FROM MESA_EXAMEN M  INNER JOIN TRIBUNAL T  ON M.idTribunal= T.id
                 INNER JOIN PROFESOR P ON T.presidente = P.id
                 LEFT JOIN PROFESOR P1 ON  T.vocal = P1.id
@@ -178,14 +177,13 @@ error_reporting(E_ERROR | E_PARSE);
                                 <td>1Llamado</td>
                             <?php if(empty(@$TIPO) || @$TIPO == "general"){?>
                                 <td>2Llamado</td>
-                                <td>1LlamadoUnico</td>
-                                <td>2LlamadoUnico</td>
+                                <td>fechaUnica</td>
                                 <td>Hora</td>
                                 <td>Ver Mas</td>
                                 <td>Modificar</td>
                                 <td>Eliminar</td>
                             <?php }else { ?>
-                                <td>1LlamadoUnico</td>
+                                <td>fechaUnica</td>
                                 <td>Hora</td>
                                 <td>Ver Mas</td>
                                 <td>Modificar</td>
@@ -211,15 +209,6 @@ error_reporting(E_ERROR | E_PARSE);
                             $idMesa=$row['idMesa'];
                             $idasignatura=$row['Asignaturaid'];
                             $fechaUnica=$row['fechaUnica'];
-                            $fechaUnica1=$row['fechaUnica1'];
-                            
-                                $time = date('d/m/Y','', time());
-                                
-                                if(strtotime($fechaUnica) < strtotime($time)){
-                                     $query = "UPDATE LLAMADO_MESA_EXAMEN SET fechaUnica = NULL, fechaUnica1 = NULL WHERE idLlamado = {$idLlamado} AND idMesa = {$idMesa}";
-                                        $consulta = BDConexion::getInstancia()->query($query);
-                                }
-
                             if(empty(@$TIPO) || @$TIPO == "general"){
                                 $fecha2= $row['fecha2'];
                                 echo
@@ -233,21 +222,12 @@ error_reporting(E_ERROR | E_PARSE);
                                 <td>'.$suplente.'</td>';
                                 if($fechaUnica != null){
                                 echo'
-                                <td style="background-color:#E66969">'.$fecha1.'</td>';
-                                }else{
+                                <td style="background-color:"#9c9c9c">'.$fecha1.'</td>';
+                                }else
                                 echo'
-                                <td>'.$fecha1.'</td>';
-                                } 
-                                if($fechaUnica1 != null){
-                                    echo'
-                                    <td style="background-color:#E66969">'.$fecha2.'</td>';
-                                    }else{
-                                    echo'
-                                <td>'.$fecha2.'</td>';
-                                    }
-                                    echo'
+                                <td>'.$fecha1.'</td>
+                                <td>'.$fecha2.'</td>
                                 <td>'.$fechaUnica.'</td>
-                                <td>'.$fechaUnica1.'</td>
                                 <td>'.$hora.'</td>
                                 <td align="center">
                                 <button class="btn btn-outline-primary" class="btn btn-outline-info">
